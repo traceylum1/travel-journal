@@ -52,21 +52,29 @@ var albums = []album{
     {ID: "3", Title: "Sarah Vaughan and Clifford Brown", Artist: "Sarah Vaughan", Price: 39.99},
 }
 
+var u user = user{
+    UserName: "Marcus", Password: "JimboJames", Trips: []string{"123"},
+}
+
 func main() {
-    dbpool, err := pgxpool.New(context.Background(), os.Getenv("DATABASE_URL"))
+    dbpool, err := pgxpool.New(context.Background(), "postgres://tracey@localhost:5432/traveljournal?sslmode=disable")
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
 		os.Exit(1)
 	}
 	defer dbpool.Close()
 
-	var greeting string
-	err = dbpool.QueryRow(context.Background(), "select current_database()").Scan(&greeting)
+	_, err = dbpool.Exec(
+        context.Background(), 
+        `INSERT INTO users (username, password, trips)
+        VALUES ($1, $2, $3)`,
+        u.UserName,
+        u.Password,
+        u.Trips,
+        )
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "QueryRow failed: %v\n", err)
+		fmt.Fprintf(os.Stderr, "Insert user failed: %v\n", err)
 	}
-
-	fmt.Println(greeting)
 
     router := gin.Default()
 
