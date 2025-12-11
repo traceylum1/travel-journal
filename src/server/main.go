@@ -2,9 +2,13 @@ package main
 
 import (
     "net/http"
+    "context"
+    "fmt"
+    "os"
 
     "github.com/gin-gonic/gin"
     // "github.com/gin-contrib/cors"
+    "github.com/jackc/pgx/v5/pgxpool"
 
 )
 
@@ -49,6 +53,21 @@ var albums = []album{
 }
 
 func main() {
+    dbpool, err := pgxpool.New(context.Background(), os.Getenv("DATABASE_URL"))
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
+		os.Exit(1)
+	}
+	defer dbpool.Close()
+
+	var greeting string
+	err = dbpool.QueryRow(context.Background(), "select current_database()").Scan(&greeting)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "QueryRow failed: %v\n", err)
+	}
+
+	fmt.Println(greeting)
+
     router := gin.Default()
 
     // router.Use(cors.New(cors.Config{
