@@ -5,11 +5,11 @@ import (
     "context"
     "fmt"
     "os"
+    "log"
 
     "github.com/gin-gonic/gin"
     // "github.com/gin-contrib/cors"
-    "github.com/jackc/pgx/v5/pgxpool"
-
+    "github.com/traceylum1/travel-journal/src/server/internal/db"
 )
 
 type user struct {
@@ -59,24 +59,13 @@ var u user = user{
 }
 
 func main() {
-    dbpool, err := pgxpool.New(context.Background(), "postgres://tracey@localhost:5432/traveljournal?sslmode=disable")
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
-		os.Exit(1)
-	}
-	defer dbpool.Close()
+    ctx := context.Background()
 
-	_, err = dbpool.Exec(
-        context.Background(), 
-        `INSERT INTO users (username, password, trips)
-        VALUES ($1, $2, $3)`,
-        u.UserName,
-        u.Password,
-        u.Trips,
-        )
+	pool, err := db.NewPostgresPool(ctx)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Insert user failed: %v\n", err)
+		log.Fatal(err)
 	}
+	defer pool.Close()
 
     router := gin.Default()
 
