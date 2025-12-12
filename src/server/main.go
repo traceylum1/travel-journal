@@ -20,12 +20,14 @@ type user struct {
 
 // marker represents data about a marker that was placed on the map
 type marker struct {
-    ID     string  `json:"id"`
-    Owner  string  `json:"owner"`
+    MarkerID     string  `json:"markerid"`
     Location string  `json:"location"`
     Description  string `json:"description"`
     Date string `json:"date"`
+    Latitude string `json:"latitutde"`
+    Longitude string `json:"longitude"`
 	TripID string `json:"tripid"`
+    CreatedBy string `json:"createdby"`
 }
 
 type trip struct {
