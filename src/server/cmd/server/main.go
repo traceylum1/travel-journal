@@ -2,10 +2,14 @@ package main
 
 import (
     "net/http"
+    "context"
+    "fmt"
+    "os"
+    "log"
 
     "github.com/gin-gonic/gin"
     // "github.com/gin-contrib/cors"
-
+    "github.com/traceylum1/travel-journal/src/server/internal/db"
 )
 
 type user struct {
@@ -16,12 +20,14 @@ type user struct {
 
 // marker represents data about a marker that was placed on the map
 type marker struct {
-    ID     string  `json:"id"`
-    Owner  string  `json:"owner"`
+    MarkerID     string  `json:"markerid"`
     Location string  `json:"location"`
     Description  string `json:"description"`
     Date string `json:"date"`
+    Latitude string `json:"latitutde"`
+    Longitude string `json:"longitude"`
 	TripID string `json:"tripid"`
+    CreatedBy string `json:"createdby"`
 }
 
 type trip struct {
@@ -48,7 +54,19 @@ var albums = []album{
     {ID: "3", Title: "Sarah Vaughan and Clifford Brown", Artist: "Sarah Vaughan", Price: 39.99},
 }
 
+var u user = user{
+    UserName: "Marcus", Password: "JimboJames", Trips: []string{"123"},
+}
+
 func main() {
+    ctx := context.Background()
+
+	pool, err := db.NewPostgresPool(ctx)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer pool.Close()
+
     router := gin.Default()
 
     // router.Use(cors.New(cors.Config{
