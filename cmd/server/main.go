@@ -3,13 +3,11 @@ package main
 import (
     "net/http"
     "context"
-    "fmt"
-    "os"
     "log"
 
     "github.com/gin-gonic/gin"
     // "github.com/gin-contrib/cors"
-    "github.com/traceylum1/travel-journal/src/server/internal/db"
+    "github.com/traceylum1/travel-journal/internal/db"
 )
 
 type user struct {
