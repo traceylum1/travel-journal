@@ -6,6 +6,7 @@ const eventHandlers = {
 
         const marker = L.marker([e.latlng.lat, e.latlng.lng]).addTo(map);
 
+        console.log(typeof(e.latlng.lat), e.latlng.lat);
         //   const popupDescription = document.querySelector('#popup-input').value;
         const popupContent = document.createElement('div');
 
@@ -42,49 +43,7 @@ const eventHandlers = {
         // Attach event listeners AFTER popup is added to the DOM
         popupContent
             .querySelector("#save-marker-btn")
-            .addEventListener("click", async () => {
-
-                const userName = "Marcus";
-                const markerId = crypto.randomUUID();
-                const markerLocation = document.querySelector("#marker-location").value;
-                console.log("markerLocation", markerLocation);
-
-                const markerDescription = document.querySelector("#marker-description").value;
-                console.log("markerDescription", markerDescription);
-
-                const markerDate = document.querySelector('input[type="date"]').value;
-                console.log("markerDate", markerDate);
-                
-                const markerTrip = "Belize";
-
-                try {
-                    const response = await apiCalls.addMarker(markerId, userName, markerLocation, markerDescription, markerDate, markerTrip);
-                    console.log("response", response);
-
-                    popupContent.innerHTML = `
-                        <div style="width: 15em">
-                            Date:
-                            <div style="background-color: gainsboro">
-                                ${markerDate}
-                            </div>
-                            Location:
-                            <div style="white-space: pre-wrap; background-color: gainsboro; height: 3em; overflow-x: none; overflow-y: auto">${markerLocation}
-                            </div>
-                            Description:
-                            <div style="white-space: pre-wrap; background-color: gainsboro; height: 6em; overflow-x: none; overflow-y: auto">${markerDescription}
-                            </div>
-                            <br/>
-                            <div style="display: flex; justify-content: space-evenly">
-                                <button id="edit-marker-btn">Edit</button>
-                                <button id="delete-marker-btn">Delete</button>
-                            </div>
-                        <div/>
-                    `;
-
-                } catch {
-                    console.error("failed to save marker");
-                }
-        });
+            .addEventListener("click", async () => this.handleClickSaveMarker(popupContent, e.latlng.lat, e.latlng.lng));
 
         popupContent
             .querySelector("#cancel-marker-btn")
@@ -93,7 +52,54 @@ const eventHandlers = {
         });
     },
 
-    handleClickSaveMarker: async function() {
+    handleClickSaveMarker: async (popupContent, markerLat, markerLng) => {
+        const userName = "Marcus";
+
+        const markerLocation = document.querySelector("#marker-location").value;
+        console.log("markerLocation", markerLocation);
+
+        const markerDescription = document.querySelector("#marker-description").value;
+        console.log("markerDescription", markerDescription);
+
+        const markerDate = document.querySelector('input[type="date"]').value;
+        console.log("markerDate", markerDate);
+        
+        const tripId = crypto.randomUUID();
+
+        try {
+            await apiCalls.addMarker({ 
+                markerLocation: markerLocation, 
+                markerDescription: markerDescription, 
+                markerDate: markerDate, 
+                markerLat: markerLat, 
+                markerLng: markerLng, 
+                tripId: tripId, 
+                userName: userName
+            });
+
+            popupContent.innerHTML = `
+                <div style="width: 15em">
+                    Date:
+                    <div style="background-color: gainsboro">
+                        ${markerDate}
+                    </div>
+                    Location:
+                    <div style="white-space: pre-wrap; background-color: gainsboro; height: 3em; overflow-x: none; overflow-y: auto">${markerLocation}
+                    </div>
+                    Description:
+                    <div style="white-space: pre-wrap; background-color: gainsboro; height: 6em; overflow-x: none; overflow-y: auto">${markerDescription}
+                    </div>
+                    <br/>
+                    <div style="display: flex; justify-content: space-evenly">
+                        <button id="edit-marker-btn">Edit</button>
+                        <button id="delete-marker-btn">Delete</button>
+                    </div>
+                <div/>
+            `;
+
+        } catch {
+            console.error("failed to save marker");
+        }
 
     },
 

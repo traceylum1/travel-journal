@@ -21,10 +21,10 @@ func main() {
 
     userRepo := repository.NewUserRepository(pool)
     userHandler := handlers.NewUserHandler(userRepo)
-    // markerRepo := repository.NewMarkerRepository(pool)
-    // markerHandler := handlers.NewMarkerHandler(markerRepo)
+    markerRepo := repository.NewMarkerRepository(pool)
+    markerHandler := handlers.NewMarkerHandler(markerRepo)
 
-    router := router.NewRouter(userHandler)
+    router := router.NewRouter(userHandler, markerHandler)
 
     router.Run(":8080")
 }

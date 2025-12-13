@@ -1,36 +1,42 @@
 package models
 
+import (
+    "github.com/google/uuid"
+)
+
 type User struct {
 	UserName     string  `json:"username"`
     Password    string `json:"password"`
-	Trips []string `json:"trips"`
+	Trips []uuid.UUID `json:"trips"`
 }
 
 // marker represents data about a marker that was placed on the map
 type Marker struct {
-    MarkerID     string  `json:"markerid"`
+    MarkerID     uuid.UUID  `json:"marker_id"`
     Location string  `json:"location"`
     Description  string `json:"description"`
-    Date string `json:"date"`
-    Latitude string `json:"latitutde"`
-    Longitude string `json:"longitude"`
-	TripID string `json:"tripid"`
-    CreatedBy string `json:"createdby"`
+    Date DateOnly `json:"date"`
+    Latitude float64 `json:"latitutde"`
+    Longitude float64 `json:"longitude"`
+	TripID  uuid.UUID `json:"trip_id"`
+    CreatedBy string `json:"created_by"`
+}
+
+type CreateMarkerInput struct {
+    Location    string  `json:"location"`
+    Description string  `json:"description"`
+    Date        DateOnly `json:"date"`
+    Latitude    float64 `json:"latitude"`
+    Longitude   float64 `json:"longitude"`
+    TripID      string  `json:"trip_id"`
+    CreatedBy   strong  `json:""`
 }
 
 type Trip struct {
-	TripID  string  `json:"tripid"`
-    TripName    string  `json:"tripname"`
-	StartDate   string	`json:"startdate"`
-    EndDate string  `json:"enddate"`
+	TripID  uuid.UUID  `json:"trip_id"`
+    TripName    string  `json:"trip_name"`
+	StartDate   DateOnly	`json:"start_date"`
+    EndDate DateOnly  `json:"end_date"`
     Description string `json:"description"`
-	Markers []string `json:"markers"`
-}
-
-// album represents data about a record album.
-type Album struct {
-    ID     string  `json:"id"`
-    Title  string  `json:"title"`
-    Artist string  `json:"artist"`
-    Price  float64 `json:"price"`
+	Markers []uuid.UUID `json:"markers"`
 }
