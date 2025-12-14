@@ -21,6 +21,7 @@ function Map({ addMarker, setAddMarker }) {
     // Disable double-click zoom after map creation
     map.doubleClickZoom.disable();
     
+    // Add search plugin
     const search = new GeoSearch.GeoSearchControl({
       provider: new GeoSearch.OpenStreetMapProvider(),
     });
