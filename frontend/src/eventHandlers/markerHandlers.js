@@ -53,7 +53,8 @@ const eventHandlers = {
     },
 
     handleClickSaveMarker: async (popupContent, markerLat, markerLng) => {
-        const userName = "Marcus";
+        const username = "Marcus";
+        const tripId = "1";
 
         const markerLocation = document.querySelector("#marker-location").value;
         console.log("markerLocation", markerLocation);
@@ -64,17 +65,16 @@ const eventHandlers = {
         const markerDate = document.querySelector('input[type="date"]').value;
         console.log("markerDate", markerDate);
         
-        const tripId = crypto.randomUUID();
-
+        
         try {
             await apiCalls.addMarker({ 
+                tripId: tripId, 
                 markerLocation: markerLocation, 
                 markerDescription: markerDescription, 
                 markerDate: markerDate, 
                 markerLat: markerLat, 
                 markerLng: markerLng, 
-                tripId: tripId, 
-                userName: userName
+                username: username
             });
 
             popupContent.innerHTML = `

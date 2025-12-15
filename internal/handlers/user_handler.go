@@ -17,7 +17,7 @@ func NewUserHandler(repo *repository.UserRepository) *UserHandler {
 }
 
 func (h *UserHandler) CreateUser(c *gin.Context) {
-	var input models.User
+	var input models.CreateUserInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

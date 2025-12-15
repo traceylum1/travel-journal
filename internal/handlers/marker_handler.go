@@ -7,7 +7,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/traceylum1/travel-journal/internal/models"
 	"github.com/traceylum1/travel-journal/internal/repository"
-	"github.com/google/uuid"
 )
 
 type MarkerHandler struct {
@@ -29,25 +28,7 @@ func (h *MarkerHandler) CreateMarker(c *gin.Context) {
 
 	log.Printf("parsed input: %+v", input)
 
-    tripID, err := uuid.Parse(input.TripID)
-    if err != nil {
-		log.Printf("invalid trip_id %q: %v", input.TripID, err)
-        c.JSON(http.StatusBadRequest, gin.H{"error": "invalid trip_id"})
-        return
-    }
-
-    marker := models.Marker{
-        MarkerID:    uuid.New(),
-        Location:    input.Location,
-        Description: input.Description,
-        Date:        input.Date,
-        Latitude:    input.Latitude,
-        Longitude:   input.Longitude,
-        TripID:      tripID,
-        CreatedBy:   input.CreatedBy, // from auth later
-    }
-
-    if err := h.repo.CreateMarker(c.Request.Context(), &marker); err != nil {
+    if err := h.repo.CreateMarker(c.Request.Context(), &input); err != nil {
 		log.Printf("db error: %v", err)
         c.JSON(http.StatusInternalServerError, gin.H{"error": "db error"})
         return
@@ -55,7 +36,6 @@ func (h *MarkerHandler) CreateMarker(c *gin.Context) {
 	
 	c.JSON(http.StatusCreated, input)
 }
-
 
 
 func (h *MarkerHandler) GetMarkersByTrip(c *gin.Context) {

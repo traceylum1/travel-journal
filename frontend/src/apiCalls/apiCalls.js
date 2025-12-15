@@ -1,19 +1,17 @@
 
 const apiCalls = {
-    addMarker: async function ({ markerLocation, markerDescription, markerDate, markerLat, markerLng, tripId, userName }) {
-        console.log(markerLat, markerLng);
-        console.log(typeof(markerLat));
+    addMarker: async function ({ tripId, markerLocation, markerDescription, markerDate, markerLat, markerLng, username }) {
         try {
             const response = await fetch("/api/addMarker", {
                 method: "POST",
                 body: JSON.stringify({ 
-                    Location: markerLocation, 
-                    Description: markerDescription, 
-                    Date: markerDate, 
-                    Latitude: Number(markerLat), 
-                    Longitude: Number(markerLng), 
-                    TripID: tripId, 
-                    CreatedBy: userName 
+                    trip_id: Number(tripId), 
+                    location: markerLocation, 
+                    description: markerDescription, 
+                    date: markerDate, 
+                    latitude: Number(markerLat), 
+                    longitude: Number(markerLng), 
+                    created_by: username 
                 }),
             });
             if (!response.ok) {

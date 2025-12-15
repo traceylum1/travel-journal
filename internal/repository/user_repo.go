@@ -17,12 +17,12 @@ func NewUserRepository(db *pgxpool.Pool) *UserRepository {
 	return &UserRepository{db: db}
 }
 
-func (r *UserRepository) CreateUser(ctx context.Context, u *models.User) error {
+func (r *UserRepository) CreateUser(ctx context.Context, u *models.CreateUserInput) error {
 	_, err := r.db.Exec(
         context.Background(), 
         `INSERT INTO users (username, password, trips)
         VALUES ($1, $2, $3)`,
-    	u.UserName, u.Password, u.Trips,
+    	u.Username, u.Password, u.UserTrips,
         )
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Create new user failed: %v\n", err)
