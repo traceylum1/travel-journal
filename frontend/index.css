@@ -5,44 +5,44 @@ html, body, #root {
     overflow: hidden;
 }
 
-body {
+html {
     background-color:rgb(29, 29, 29);
 }
 
 .app {
-    height: 90%;
-    width: 95%;
-    justify-items: center;
+    display: flex;
+    height: 100%;
+    width: 100%;
 }
 
 #header {
     color:rgb(249, 237, 222);
 }
 
-#main {
-    display: flex;
+#main-left {
     height: 100%;
-    width: 100%;
+    width: 50%;
+    justify-items: center;
 }
 
 #controls {
-    width: 10%;
+    width: 30%;
     height: 80%;
     padding: 1rem 2rem;
-    border-style: dashed;
+    /* border-style: dashed; */
 }
 
 .control-button {
     color: black;
     border-radius: 8px;
-    width: 90%;
+    width: 100%;
     padding: 8px;
     margin: 6px 0px;
 }
 
 #map {
-    height: 90%;
-    width: 80%;
+    height: 100%;
+    width: 100%;
 }
 
 textarea {

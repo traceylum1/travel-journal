@@ -1,11 +1,8 @@
+// BUG: marker color buggy, doesn't change back to default when clicking on map to add marker, even tho the useState value is correctly switched
+
 function AddMarkerBtn({addMarker, setAddMarker}) {
     return (
         <div>
-            {/* description:
-            <form>
-                <input id="popup-input">
-                </input>
-            </form> */}
             <button className="control-button"
                 onClick={() => setAddMarker(prev => !prev)}
                 style={{

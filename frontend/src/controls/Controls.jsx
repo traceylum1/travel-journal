@@ -1,4 +1,5 @@
 import AddMarkerBtn from './AddMarkerBtn';
+import CreateTripBtn from './CreateTripBtn';
 
 function Controls({ addMarker, setAddMarker }) {
 
@@ -9,9 +10,7 @@ function Controls({ addMarker, setAddMarker }) {
             setAddMarker={setAddMarker}
           />
 
-          <button className="control-button">
-            other button
-          </button>
+          <CreateTripBtn/>
 
           <button className="control-button">
             other button

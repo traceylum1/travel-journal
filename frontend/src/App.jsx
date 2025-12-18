@@ -4,21 +4,23 @@ import Controls from './controls/Controls';
 
 function App() {
   const [ addMarker, setAddMarker ] = useState(false);
+  console.log("addMarker", addMarker);
 
   return (
     <div className="app">
-      <h1 id="header">Travel Journal</h1>
-      <div id="main">
+      
+      <div id="main-left">
+        <h1 id="header">Travel Journal</h1>
         <Controls
           addMarker={addMarker}
           setAddMarker={setAddMarker}
         />
-        
+      </div>
+
         <Map
           addMarker={addMarker}
           setAddMarker={setAddMarker}
           />
-        </div>
     </div>
   )
 }
