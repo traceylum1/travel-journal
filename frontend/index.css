@@ -48,3 +48,7 @@ html {
 textarea {
     font-family: Arial;
 }
+
+.autofill-item:hover {
+    background-color:rgb(104, 104, 104);
+}

@@ -1,5 +1,5 @@
 import AddMarkerBtn from './AddMarkerBtn';
-import CreateTripBtn from './CreateTripBtn';
+import CreateTripBtn from './CreateTrip/CreateTripBtn';
 
 function Controls({ addMarker, setAddMarker }) {
 
