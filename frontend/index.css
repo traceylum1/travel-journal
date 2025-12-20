@@ -5,6 +5,11 @@ html, body, #root {
     overflow: hidden;
 }
 
+body {
+    margin: 0;
+    padding: 0;
+}
+
 html {
     background-color:rgb(29, 29, 29);
 }
@@ -49,6 +54,11 @@ textarea {
     font-family: Arial;
 }
 
+.autofill-item {
+    list-style: none;
+    background-color: white;
+    cursor: pointer;
+}
 .autofill-item:hover {
-    background-color:rgb(104, 104, 104);
+    background-color:rgb(200, 255, 202);
 }
