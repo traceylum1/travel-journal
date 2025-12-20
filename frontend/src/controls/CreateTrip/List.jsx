@@ -13,5 +13,5 @@ export default function List({ trie, input, setInput }) {
 
   if (!input) return <div />;
 
-  return <ul>{listItems(trie)}</ul>;
+  return <ul className="country-list">{listItems(trie)}</ul>;
 }

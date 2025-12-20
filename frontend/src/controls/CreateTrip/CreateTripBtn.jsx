@@ -23,7 +23,10 @@ function CreateTripBtn() {
     return (
         <div>
             <button className="control-button"
-                onClick={() => setInputVisible(prev => !prev)}
+                onClick={() => {
+                    setInputVisible(prev => !prev);
+                    setInput("");
+                }}
                 style={{
                     backgroundColor: inputVisible ? "gray" : "white",
                 }}

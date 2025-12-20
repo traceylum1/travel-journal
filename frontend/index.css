@@ -58,7 +58,16 @@ textarea {
     list-style: none;
     background-color: white;
     cursor: pointer;
+    width: 100%;
+    border-style: solid;
+    border-width: 1px;
+    border-color:rgb(199, 199, 199);
 }
 .autofill-item:hover {
     background-color:rgb(200, 255, 202);
+}
+
+.country-list {
+    position: absolute;
+    padding-inline-start: 0%;
 }
