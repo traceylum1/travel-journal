@@ -27,14 +27,38 @@ html {
 #main-left {
     height: 100%;
     width: 50%;
-    justify-items: center;
+    display: flex;
+    flex-flow: column;
+    align-items: center;
 }
 
 #controls {
     width: 30%;
-    height: 80%;
-    padding: 1rem 2rem;
     /* border-style: dashed; */
+}
+
+.trip-list {
+    width: 95%;
+    flex: 1;
+    overflow: auto;
+    border-style: dashed;
+    background-color: antiquewhite;
+}
+
+.trip-display {
+    width: 95%;
+    flex: 1;
+    background-color: aquamarine;
+    border-style: dashed;
+}
+
+.trip-items li:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.trip-items li {
+    list-style: none;
 }
 
 .control-button {
@@ -70,4 +94,9 @@ textarea {
 .country-list {
     position: absolute;
     padding-inline-start: 0%;
+    margin: 0;
+    overflow-y: auto;
+    height: 200px;
+    overflow-x: hidden;
 }
+

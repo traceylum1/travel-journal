@@ -1,7 +1,7 @@
 export default function List({ trie, input, setInput }) {
 
   function clickItem(item) {
-    document.getElementById("country-name").value = item;
+    document.getElementByClassName("country-name").value = item;
     setInput("");
   }
 

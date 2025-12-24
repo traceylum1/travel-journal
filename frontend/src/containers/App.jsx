@@ -1,10 +1,13 @@
 import { useState } from 'react';
 import Map from './Map';
 import Controls from './controls/Controls';
+import TripList from './trips/TripList';
+import Trip from './trips/Trip';
 
 function App() {
   const [ addMarker, setAddMarker ] = useState(false);
-  console.log("addMarker", addMarker);
+  const [ tripDisplay, setTripDisplay ] = useState("");
+
 
   return (
     <div className="app">
@@ -15,12 +18,22 @@ function App() {
           addMarker={addMarker}
           setAddMarker={setAddMarker}
         />
+        <TripList
+          setTripDisplay={setTripDisplay}
+        />
+        { tripDisplay ?
+          <Trip
+            tripDisplay={tripDisplay}
+          /> : null 
+        }
       </div>
 
         <Map
           addMarker={addMarker}
           setAddMarker={setAddMarker}
           />
+        
+
     </div>
   )
 }

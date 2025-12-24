@@ -12,18 +12,6 @@ function Controls({ addMarker, setAddMarker }) {
 
           <CreateTripBtn/>
 
-          <button className="control-button">
-            other button
-          </button>
-
-          <button className="control-button">
-            other button
-          </button>
-
-          <button className="control-button">
-            other button
-          </button>
-
         </div>
     )
 }

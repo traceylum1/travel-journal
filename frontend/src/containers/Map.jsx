@@ -3,7 +3,7 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-geosearch/dist/geosearch.css';
 import * as GeoSearch from 'leaflet-geosearch';
-import eventHandlers from './eventHandlers/markerHandlers';
+import eventHandlers from '../eventHandlers/markerHandlers';
 
 
 function Map({ addMarker, setAddMarker }) {
