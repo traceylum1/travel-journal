@@ -1,4 +1,4 @@
-import apiCalls from "../apiCalls/apiCalls";
+import apiCalls from "../Requests/apiCalls";
 
 const eventHandlers = {
     handleClickAddMarker: function(e, addMarker, setAddMarker, map, L) {

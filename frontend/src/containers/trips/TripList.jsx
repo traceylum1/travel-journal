@@ -2,6 +2,7 @@
 function TripList({setTripDisplay}) {
     return (
         <div className="trip-list">
+            <h2>Your Trips</h2>
             <ul className="trip-items">
                 <li onClick={() => setTripDisplay("Belize")}>Belize</li>
                 <li onClick={() => setTripDisplay("Kenya")}>Kenya</li>
@@ -11,4 +12,4 @@ function TripList({setTripDisplay}) {
     )
 }
 
-export default TripList
+export default TripList;

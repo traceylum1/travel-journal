@@ -1,17 +1,17 @@
 import { useState } from 'react';
 import Map from './Map';
-import Controls from './controls/Controls';
-import TripList from './trips/TripList';
-import Trip from './trips/Trip';
+import Controls from './Controls/Controls';
+import TripList from './Trips/TripList';
+import Trip from './Trips/Trip';
+import LoginPage from './Login/LoginPage';
 
 function App() {
   const [ addMarker, setAddMarker ] = useState(false);
   const [ tripDisplay, setTripDisplay ] = useState("");
 
-
-  return (
+  const mainContainer = 
     <div className="app">
-      
+
       <div id="main-left">
         <h1 id="header">Travel Journal</h1>
         <Controls
@@ -27,15 +27,17 @@ function App() {
           /> : null 
         }
       </div>
-
         <Map
           addMarker={addMarker}
           setAddMarker={setAddMarker}
           />
-        
-
     </div>
+  
+  const loginPage = <LoginPage/>
+
+  return (
+    localStorage.getItem("username") === undefined ? loginPage : mainContainer
   )
 }
 
-export default App
+export default App;
