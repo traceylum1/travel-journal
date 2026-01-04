@@ -31,6 +31,19 @@ func (h *UserHandler) CreateUser(c *gin.Context) {
 	c.JSON(http.StatusCreated, input)
 }
 
+func (h *UserHandler) UserLogin(c *gin.Context) {
+	username := c.Param("username")
+	password := c.Param("password")
+
+	trips, err := h.repo.GetTrips(c.Request.Context(), username)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "user not found"})
+		return
+	}
+
+	c.JSON(http.StatusOK, trips)
+}
+
 
 
 func (h *UserHandler) GetUserTrips(c *gin.Context) {

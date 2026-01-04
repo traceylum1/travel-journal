@@ -36,7 +36,7 @@ function App() {
   const loginPage = <LoginPage/>
 
   return (
-    localStorage.getItem("username") === "" ? loginPage : mainContainer
+    mainContainer
   )
 }
 

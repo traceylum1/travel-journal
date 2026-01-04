@@ -1,5 +1,45 @@
 
 const apiCalls = {
+    login: async function ({ username, password }) {
+        try {
+            const response = await fetch("/api/login", {
+                method: "POST",
+                body: JSON.stringify({
+                    username: username,
+                    password: password,
+                })
+            })
+            if (!response.ok) {
+                throw new Error(`Response status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            console.log(result);
+        } catch (error) {
+            console.error(error.message)
+        }
+    },
+
+    register: async function ({ username, password }) {
+        try {
+            const response = await fetch("/api/register", {
+                method: "POST",
+                body: JSON.stringify({
+                    username: username,
+                    password: password,
+                })
+            })
+            if (!response.ok) {
+                throw new Error(`Response status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            console.log(result);
+        } catch (error) {
+            console.error(error.message)
+        }
+    },
+    
     addMarker: async function ({ tripId, markerLocation, markerDescription, markerDate, markerLat, markerLng, username }) {
         try {
             const response = await fetch("/api/addMarker", {
@@ -14,8 +54,9 @@ const apiCalls = {
                     created_by: username 
                 }),
             });
+            console.log("response", response);
             if (!response.ok) {
-            throw new Error(`Response status: ${response.status}`);
+                throw new Error(`Response status: ${response.status}`);
             }
 
             const result = await response.json();
@@ -23,7 +64,7 @@ const apiCalls = {
         } catch (error) {
             console.error(error.message);
         }
-    }
+    },
 }
 
 export default apiCalls;
