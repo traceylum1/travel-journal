@@ -119,6 +119,10 @@ textarea {
     justify-content: center;
 }
 
+.login-form {
+    margin-bottom: 5rem;
+}
+
 .login-form label {
     display: block;
     margin: 0.5rem 0rem 0.2rem;
