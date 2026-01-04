@@ -37,7 +37,7 @@ function isUsernamePasswordValid(username, password) {
         return false;
     }
     if (!isPasswordValid(password)) {
-        alert("Password must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters.");
+        alert("Password must contain at least one number, one special character, one uppercase and lowercase letter, and at least 8 or more characters.");
         return false;
     }
     return true;

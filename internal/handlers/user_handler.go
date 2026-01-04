@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"net/http"
+	"log"
 
 	"github.com/gin-gonic/gin"
 	"github.com/traceylum1/travel-journal/internal/models"
@@ -35,21 +36,22 @@ func (h *UserHandler) UserLogin(c *gin.Context) {
 	username := c.Param("username")
 	password := c.Param("password")
 
-	trips, err := h.repo.GetTrips(c.Request.Context(), username)
+	err := h.repo.ValidateUser(c.Request.Context(), username, password)
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "user not found"})
+		log.Printf("Validate error: %v", err)
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err})
 		return
 	}
 
-	c.JSON(http.StatusOK, trips)
+	c.Status(http.StatusOK)
 }
 
 
 
 func (h *UserHandler) GetUserTrips(c *gin.Context) {
-	userName := c.Param("username")
+	username := c.Param("username")
 
-	trips, err := h.repo.GetTrips(c.Request.Context(), userName)
+	trips, err := h.repo.GetTrips(c.Request.Context(), username)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "user not found"})
 		return

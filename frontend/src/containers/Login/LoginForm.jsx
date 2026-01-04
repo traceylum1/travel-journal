@@ -14,19 +14,19 @@ function LoginForm() {
     setPassword(e.target.value);
   }
 
-  function handleLogin(e) {
+  async function handleLogin(e) {
     e.preventDefault();
     if (!isUsernamePasswordValid(username, password)) {
       return;
     };
     try {
-      const response = apiCalls.login({ 
+      const response = await apiCalls.login({ 
         username: username, 
         password: password 
-      })
+      });
     } catch (error) {
-      console.error(error);
-    }
+      console.error("login error 28", error);
+    };
   };
 
   function handleSignUp(e) {

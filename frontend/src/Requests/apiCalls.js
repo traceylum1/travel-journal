@@ -10,11 +10,9 @@ const apiCalls = {
                 })
             })
             if (!response.ok) {
+                console.log("response", response);
                 throw new Error(`Response status: ${response.status}`);
             }
-
-            const result = await response.json();
-            console.log(result);
         } catch (error) {
             console.error(error.message)
         }

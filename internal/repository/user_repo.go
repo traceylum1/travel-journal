@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"errors"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/traceylum1/travel-journal/internal/models"
@@ -30,12 +31,45 @@ func (r *UserRepository) CreateUser(ctx context.Context, u *models.CreateUserInp
 	return err
 }
 
-func (r *UserRepository) GetTrips(ctx context.Context, userName string) (*[]string, error) {
+
+func (r *UserRepository) ValidateUser(
+	ctx context.Context,
+	username string,
+	password string,
+) error {
+	var exists bool
+
+	err := r.db.QueryRow(
+		ctx,
+		`SELECT EXISTS (
+			SELECT 1
+			FROM users
+			WHERE username = $1 AND password = $2
+		);`,
+		username,
+		password,
+	).Scan(&exists)
+
+	if err != nil {
+		// database / query failure
+		return err
+	}
+
+	if !exists {
+		// user not found or invalid credentials
+		return errors.New("invalid username or password")
+	}
+
+	return nil
+}
+
+
+func (r *UserRepository) GetTrips(ctx context.Context, username string) (*[]string, error) {
 	var trips []string
 	err := r.db.QueryRow(
 		ctx,
 		`SELECT trips FROM users WHERE username=$1`,
-		userName,
+		username,
 	).Scan(&trips)
 
 	return &trips, err

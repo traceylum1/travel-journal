@@ -10,6 +10,7 @@ func NewRouter(userHandler *handlers.UserHandler, markerHandler *handlers.Marker
 
 	r.POST("api/user", userHandler.CreateUser)
 	r.GET("api/user/:username", userHandler.GetUserTrips)
+	r.POST("api/login", userHandler.UserLogin)
 	r.POST("api/addMarker", markerHandler.CreateMarker)
 
 	return r
