@@ -1,18 +1,20 @@
 package models
 
+import "time"
+
 // CreateUserInput represents the user input data sent to the backend to create the user
 type CreateUserInput struct {
 	Username    string  `json:"username"`
     Password    string  `json:"password"`
-	UserTrips   []int   `json:"user_trips"`
 }
 
 // User represents the stored data about a user
 type User struct {
-    UserID      int     `json:"user_id"`
-	Username    string  `json:"username"`
-    Password    string  `json:"password"`
-	UserTrips   []int   `json:"user_trips"`
+    UserID      int         `json:"user_id"`
+	Username    string      `json:"username"`
+    Password    string      `json:"password"`
+	UserTrips   []int       `json:"user_trips"`
+    CreatedAt   time.Time   `json:"created_at"`
 }
 
 // LoginRequest represents the user input data sent to the backend to validate login credentials

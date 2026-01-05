@@ -43,6 +43,9 @@ const apiCalls = {
         try {
             const response = await fetch("/api/register", {
                 method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
                 body: JSON.stringify({
                     username: username,
                     password: password,
@@ -52,10 +55,17 @@ const apiCalls = {
                 throw new Error(`Response status: ${response.status}`);
             }
 
-            const result = await response.json();
-            console.log(result);
-        } catch (error) {
-            console.error(error.message)
+            // Successful register
+            return {
+                success: true,
+            };
+        } catch {
+            // Network error, CORS, timeout, DNS, etc.
+            return {
+                success: false,
+                type: "NETWORK",
+                message: "Unable to reach server. Please try again.",
+            };
         }
     },
     

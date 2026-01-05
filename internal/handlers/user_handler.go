@@ -3,11 +3,13 @@ package handlers
 import (
 	"net/http"
 	"log"
+	"errors"
 
 	"github.com/gin-gonic/gin"
 	"github.com/traceylum1/travel-journal/internal/models"
 	"github.com/traceylum1/travel-journal/internal/repository"
 )
+
 
 type UserHandler struct {
 	repo *repository.UserRepository
@@ -26,7 +28,7 @@ func (h *UserHandler) CreateUser(c *gin.Context) {
 	}
 
 	if err := h.repo.CreateUser(c.Request.Context(), &input); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "db error"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err})
 		return
 	}
 
@@ -36,14 +38,18 @@ func (h *UserHandler) CreateUser(c *gin.Context) {
 func (h *UserHandler) UserLogin(c *gin.Context) {
 	var req models.LoginRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request body",})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
 		return
 	}
 
 	err := h.repo.ValidateUser(c.Request.Context(), req.Username, req.Password)
 	if err != nil {
-		log.Printf("Validate error: %v", err)
-		c.JSON(http.StatusUnauthorized, gin.H{"error": err})
+		if errors.Is(err, repository.ErrInvalidCredentials) {
+			log.Printf("Validate error: %v", err)
+			c.JSON(http.StatusUnauthorized, gin.H{"error": err})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err})
 		return
 	}
 

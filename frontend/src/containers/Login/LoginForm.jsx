@@ -36,16 +36,29 @@ function LoginForm() {
       };
 
     } catch (error) {
-      console.error("login error 28", error);
+      console.error("login error line 28", error);
     };
   };
 
-  function handleSignUp(e) {
+  async function handleSignUp(e) {
     e.preventDefault();
     if (!isUsernamePasswordValid(username, password)) {
       return;
     };
     // Send request to sign up
+    try {
+      const response = await apiCalls.register({ 
+        username: username, 
+        password: password 
+      });
+      if (!response.success) {
+        alert(response.message);
+        clearForm();
+      };
+
+    } catch (error) {
+      console.error("signup error line 60", error);
+    };
   };
 
   return (

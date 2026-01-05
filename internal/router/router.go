@@ -8,10 +8,10 @@ import (
 func NewRouter(userHandler *handlers.UserHandler, markerHandler *handlers.MarkerHandler) *gin.Engine {
 	r := gin.Default()
 
-	r.POST("api/user", userHandler.CreateUser)
-	r.GET("api/user/:username", userHandler.GetUserTrips)
+	r.POST("api/register", userHandler.CreateUser)
 	r.POST("api/login", userHandler.UserLogin)
 	r.POST("api/addMarker", markerHandler.CreateMarker)
+	r.GET("api/user/:username", userHandler.GetUserTrips)
 
 	return r
 }
