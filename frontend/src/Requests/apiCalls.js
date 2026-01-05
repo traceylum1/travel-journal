@@ -4,17 +4,38 @@ const apiCalls = {
         try {
             const response = await fetch("/api/login", {
                 method: "POST",
-                body: JSON.stringify({
-                    username: username,
-                    password: password,
-                })
-            })
-            if (!response.ok) {
-                console.log("response", response);
-                throw new Error(`Response status: ${response.status}`);
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ username, password }),
+            });
+
+            // Request reached the server, but login failed
+            if (response.status === 401) {
+                return {
+                    success: false,
+                    type: "AUTH",
+                    message: "Invalid username or password",
+                };
             }
-        } catch (error) {
-            console.error(error.message)
+
+            // Other non-OK HTTP errors (500, 503, etc.)
+            if (!response.ok) {
+                throw new Error(`Server error: ${response.status}`);
+            }
+
+            // Successful login
+            return {
+                success: true,
+            };
+
+        } catch {
+            // Network error, CORS, timeout, DNS, etc.
+            return {
+                success: false,
+                type: "NETWORK",
+                message: "Unable to reach server. Please try again.",
+            };
         }
     },
 

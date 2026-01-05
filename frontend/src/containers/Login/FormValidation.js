@@ -7,7 +7,7 @@ function isUsernameValid(username) {
         - Underscores (_)
     */
     const re = {
-        alphanum: /^[a-z0-9]+$/,
+        alphanum: /^[a-zA-Z0-9]+$/,
         length: /(?=.{5,15}$)/,
     };
     return (

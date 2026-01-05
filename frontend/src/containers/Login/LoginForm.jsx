@@ -14,6 +14,12 @@ function LoginForm() {
     setPassword(e.target.value);
   }
 
+  function clearForm() {
+    document.getElementById("login-form").reset()
+    setUsername("");
+    setPassword("");
+  };
+
   async function handleLogin(e) {
     e.preventDefault();
     if (!isUsernamePasswordValid(username, password)) {
@@ -24,6 +30,11 @@ function LoginForm() {
         username: username, 
         password: password 
       });
+      if (!response.success) {
+        alert(response.message);
+        clearForm();
+      };
+
     } catch (error) {
       console.error("login error 28", error);
     };
@@ -38,7 +49,7 @@ function LoginForm() {
   };
 
   return (
-    <form className="login-form" action="/login" method="POST">
+    <form className="login-form" id="login-form" action="/login" method="POST">
         <label htmlFor="username">Username:</label>
         <input 
           username="username" 

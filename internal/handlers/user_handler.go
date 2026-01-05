@@ -17,6 +17,7 @@ func NewUserHandler(repo *repository.UserRepository) *UserHandler {
 	return &UserHandler{repo: repo}
 }
 
+
 func (h *UserHandler) CreateUser(c *gin.Context) {
 	var input models.CreateUserInput
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -33,10 +34,13 @@ func (h *UserHandler) CreateUser(c *gin.Context) {
 }
 
 func (h *UserHandler) UserLogin(c *gin.Context) {
-	username := c.Param("username")
-	password := c.Param("password")
+	var req models.LoginRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request body",})
+		return
+	}
 
-	err := h.repo.ValidateUser(c.Request.Context(), username, password)
+	err := h.repo.ValidateUser(c.Request.Context(), req.Username, req.Password)
 	if err != nil {
 		log.Printf("Validate error: %v", err)
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err})
