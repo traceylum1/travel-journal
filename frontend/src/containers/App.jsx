@@ -4,10 +4,12 @@ import Controls from './Controls/Controls';
 import TripList from './Trips/TripList';
 import Trip from './Trips/Trip';
 import LoginPage from './Login/LoginPage';
+import { useLocalStorageState } from '../CustomHooks/customHooks';
 
 function App() {
   const [ addMarker, setAddMarker ] = useState(false);
   const [ tripDisplay, setTripDisplay ] = useState("");
+  const [ username, setUsername ] = useLocalStorageState("username", null)
 
   const mainContainer = 
     <div className="app">
@@ -36,7 +38,7 @@ function App() {
   const loginPage = <LoginPage/>
 
   return (
-    localStorage.getItem("username") === "" ? loginPage : mainContainer
+    localStorage.getItem("username") === null ? loginPage : mainContainer
   )
 }
 

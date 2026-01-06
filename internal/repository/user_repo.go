@@ -22,8 +22,11 @@ func NewUserRepository(db *pgxpool.Pool) *UserRepository {
 
 var ErrInvalidCredentials = errors.New("invalid credentials")
 
-func (r *UserRepository) CreateUser(ctx context.Context, u *models.CreateUserInput) error {
-	// Hash password
+func (r *UserRepository) CreateUser(
+	ctx context.Context, 
+	u *models.CreateUserInput,
+) error {
+	// Hash password (automatic salting)
 	hash, err := bcrypt.GenerateFromPassword(
 		[]byte(u.Password),
 		bcrypt.DefaultCost,
@@ -83,7 +86,10 @@ func (r *UserRepository) ValidateUser(
 }
 
 
-func (r *UserRepository) GetTrips(ctx context.Context, username string) (*[]string, error) {
+func (r *UserRepository) GetTrips(
+	ctx context.Context, 
+	username string,
+) (*[]string, error) {
 	var trips []string
 	err := r.db.QueryRow(
 		ctx,

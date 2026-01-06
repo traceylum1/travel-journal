@@ -25,6 +25,7 @@ const apiCalls = {
             }
 
             // Successful login
+            localStorage.setItem("username", username);
             return {
                 success: true,
             };
