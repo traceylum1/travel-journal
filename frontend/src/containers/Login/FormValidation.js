@@ -17,14 +17,24 @@ function isUsernameValid(username) {
 };
 
 function isPasswordValid(password) {
+    /*
+        Password must include:
+        - A lowercase letter
+        - An uppercase letter
+        - 8-20 characters
+        - A special char
+        - A numerical digit
+    */
     const re = {
-        capital: /(?=.*[A-Z])/,
+        lowercase: /(?=.*[a-z])/,
+        uppercase: /(?=.*[A-Z])/,
         length: /(?=.{8,20}$)/,
         specialChar: /[ -/:-@[-`{-~]/,
         digit: /(?=.*[0-9])/,
     };
     return (
-        re.capital.test(password) &&
+        re.lowercase.test(password) &&
+        re.uppercase.test(password) &&
         re.length.test(password) &&
         re.specialChar.test(password) &&
         re.digit.test(password)
