@@ -2,12 +2,12 @@ function isUsernameValid(username) {
     /* 
         Usernames can only have: 
         - Lowercase Letters (a-z) 
+        - Uppercase Letters (A-Z)
         - Numbers (0-9)
-        - Dots (.)
         - Underscores (_)
     */
     const re = {
-        alphanum: /^[a-zA-Z0-9]+$/,
+        alphanum: /^[a-zA-Z0-9_]+$/,
         length: /(?=.{5,15}$)/,
     };
     return (
@@ -43,7 +43,7 @@ function isPasswordValid(password) {
 
 function isUsernamePasswordValid(username, password) {
     if (!isUsernameValid(username)) {
-        alert("Username must contain between 5 and 15 alphanumeric characters.");
+        alert("Username must contain between 5 and 15 alphanumeric characters or underscores.");
         return false;
     }
     if (!isPasswordValid(password)) {

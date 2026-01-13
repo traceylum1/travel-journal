@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/traceylum1/travel-journal/internal/models"
 	"github.com/traceylum1/travel-journal/internal/repository"
+	"github.com/traceylum1/travel-journal/internal/validation"
 )
 
 
@@ -23,12 +24,24 @@ func NewUserHandler(repo *repository.UserRepository) *UserHandler {
 func (h *UserHandler) CreateUser(c *gin.Context) {
 	var input models.CreateUserInput
 	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
 		return
 	}
 
+	if !validation.IsUsernameValid(input.Username) {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "username must be 5 to 15 chars and contain only lowercase letters, numbers, or underscores",
+		})
+	}
+
+	if !validation.IsPasswordValid(input.Password) {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "password must be 8 to 20 chars, include include upper, lower, digit, and special characters",
+		})
+	}
+
 	if err := h.repo.CreateUser(c.Request.Context(), &input); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create user"})
 		return
 	}
 
@@ -36,20 +49,32 @@ func (h *UserHandler) CreateUser(c *gin.Context) {
 }
 
 func (h *UserHandler) UserLogin(c *gin.Context) {
-	var req models.LoginRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
+	var input models.LoginRequest
+	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
 		return
 	}
 
-	err := h.repo.ValidateUser(c.Request.Context(), req.Username, req.Password)
+	if !validation.IsUsernameValid(input.Username) {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "username must be 5 to 15 chars and contain only lowercase letters, numbers, or underscores",
+		})
+	}
+
+	if !validation.IsPasswordValid(input.Password) {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "password must be 8 to 20 chars, include include upper, lower, digit, and special characters",
+		})
+	}
+
+	err := h.repo.ValidateUser(c.Request.Context(), input.Username, input.Password)
 	if err != nil {
 		if errors.Is(err, repository.ErrInvalidCredentials) {
 			log.Printf("Validate error: %v", err)
-			c.JSON(http.StatusUnauthorized, gin.H{"error": err})
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "user credentials not valid"})
 			return
 		}
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to validate user"})
 		return
 	}
 
