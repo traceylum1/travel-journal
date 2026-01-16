@@ -45,7 +45,17 @@ func (h *UserHandler) CreateUser(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, input)
+	c.SetCookie(
+		"session_id", // name
+		"abc123",     // value
+		3600,         // maxAge (seconds)
+		"/",          // path
+		"example.com",// domain ("" = current domain)
+		true,         // secure
+		true,         // httpOnly
+	)
+
+	c.JSON(http.StatusOK, gin.H{"status": "new user created"})
 }
 
 func (h *UserHandler) UserLogin(c *gin.Context) {
@@ -78,7 +88,17 @@ func (h *UserHandler) UserLogin(c *gin.Context) {
 		return
 	}
 
-	c.Status(http.StatusOK)
+	c.SetCookie(
+		"session_id", // name
+		"abc123",     // value
+		3600,         // maxAge (seconds)
+		"/",          // path
+		"example.com",// domain ("" = current domain)
+		true,         // secure
+		true,         // httpOnly
+	)
+
+    c.JSON(http.StatusOK, gin.H{"status": "logged in"})
 }
 
 

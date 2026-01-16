@@ -5,7 +5,7 @@ import "time"
 // CreateUserInput represents the user input data sent to the backend to create the user
 type CreateUserInput struct {
 	Username    string  `json:"username" db:"username"`
-    Password    string  `json:"password" db:"username"`
+    Password    string  `json:"password" db:"password"`
 }
 
 // User represents the stored data about a user
