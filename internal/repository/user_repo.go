@@ -6,6 +6,7 @@ import (
 	"os"
 	"errors"
 
+	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/traceylum1/travel-journal/internal/models"
@@ -41,9 +42,20 @@ func (r *UserRepository) CreateUser(
         VALUES ($1, $2)`,
     	u.Username, hash,
     )
+	
 	if err != nil {
+        var pgErr *pgconn.PgError
+        // Check if it's a PostgreSQL error
+        if errors.As(err, &pgErr) {
+            // 23505 is the code for unique_violation
+            if pgErr.Code == "23505" {
+                fmt.Println("Duplicate key violation, handling gracefully")
+                return pgErr
+            }
+        }
 		fmt.Fprintf(os.Stderr, "Create new user failed: %v\n", err)
-	}
+        return err
+    }
 
 	return err
 }

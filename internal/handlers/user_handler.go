@@ -42,7 +42,8 @@ func (h *UserHandler) CreateUser(c *gin.Context) {
 	}
 
 	if err := h.repo.CreateUser(c.Request.Context(), &input); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create user"})
+		log.Printf("error: %v", err)
+		c.JSON(http.StatusConflict, gin.H{"error": "username already exists"})
 		return
 	}
 

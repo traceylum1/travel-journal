@@ -40,15 +40,13 @@ function LoginForm() {
         username: username, 
         password: password 
       });
+
       if (!response.success) {
         alert(response.message);
-        clearForm();
-      };
-
-      setResponseMessage(response.message);
-      setTimeout(()=> {
-          console.log("reload in settimeout")
-          window.location.reload()}, 3000);
+      } else {
+        setResponseMessage(response.message);
+        setTimeout(()=> window.location.reload(), 2500);
+      }
 
     } catch (error) {
       console.error("login error line 28", error);
@@ -66,15 +64,13 @@ function LoginForm() {
         username: username, 
         password: password 
       });
+
       if (!response.success) {
         alert(response.message);
-        clearForm();
-      };
-      
-      setResponseMessage(response.message);
-      setTimeout(()=> {
-          console.log("reload in settimeout")
-          window.location.reload()}, 3000);
+      } else {
+        setResponseMessage(response.message);
+        setTimeout(()=> window.location.reload(), 2500);
+      }
 
     } catch (error) {
       console.error("signup error line 60", error);

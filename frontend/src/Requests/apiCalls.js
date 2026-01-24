@@ -53,6 +53,15 @@ const apiCalls = {
                     password: password,
                 })
             })
+
+            // Request reached the server, but did not create new user
+            if (response.status === 409) {
+                return {
+                    success: false,
+                    message: "Username already exists. Please try a new username.",
+                };
+            }
+
             if (!response.ok) {
                 throw new Error(`Response status: ${response.status}`);
             }
@@ -72,6 +81,33 @@ const apiCalls = {
             };
         }
     },
+
+    // TODO: Make createTrip endpoint
+    // createTrip: async function ({ tripId, markerLocation, markerDescription, markerDate, markerLat, markerLng, username }) {
+    //     try {
+    //         const response = await fetch("/api/createTrip", {
+    //             method: "POST",
+    //             body: JSON.stringify({ 
+    //                 location: markerLocation, 
+    //                 description: markerDescription, 
+    //                 dateStart: markerDate, 
+    //                 dateEnd: dateEnd
+    //                 latitude: Number(markerLat), 
+    //                 longitude: Number(markerLng), 
+    //                 created_by: username 
+    //             }),
+    //         });
+    //         console.log("response", response);
+    //         if (!response.ok) {
+    //             throw new Error(`Response status: ${response.status}`);
+    //         }
+
+    //         const result = await response.json();
+    //         console.log(result);
+    //     } catch (error) {
+    //         console.error(error.message);
+    //     }
+    // },
     
     addMarker: async function ({ tripId, markerLocation, markerDescription, markerDate, markerLat, markerLng, username }) {
         try {
