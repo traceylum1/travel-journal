@@ -25,9 +25,10 @@ const apiCalls = {
             }
 
             // Successful login
-            localStorage.setItem("username", username);
+            localStorage.setItem("username", JSON.stringify(username));
             return {
                 success: true,
+                message: "Successfully logged in!"
             };
 
         } catch {
@@ -57,8 +58,10 @@ const apiCalls = {
             }
 
             // Successful register
+            localStorage.setItem("username", JSON.stringify(username));
             return {
                 success: true,
+                message: "Successfully signed up!"
             };
         } catch {
             // Network error, CORS, timeout, DNS, etc.

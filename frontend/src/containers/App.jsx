@@ -38,7 +38,7 @@ function App() {
   const loginPage = <LoginPage/>
 
   return (
-    localStorage.getItem("username") === null ? loginPage : mainContainer
+    JSON.parse(localStorage.getItem("username")) === null ? loginPage : mainContainer
   )
 }
 

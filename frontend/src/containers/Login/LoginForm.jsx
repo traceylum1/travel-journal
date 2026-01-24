@@ -1,10 +1,20 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import isUsernamePasswordValid from './FormValidation';
 import apiCalls from './../../Requests/apiCalls';
 
 function LoginForm() {
   const [ username, setUsername ] = useState("");
   const [ password, setPassword ] = useState("");
+  const [ responseMessage, setResponseMessage ] = useState("");
+  const [ disableForm, setDisableForm ] = useState(false);
+
+  useEffect(() => {
+    if (responseMessage !== "") {
+      setDisableForm(true);
+      console.log("response message", responseMessage);
+
+    }
+  }, [responseMessage])
 
   function handleUsername(e) {
     setUsername(e.target.value);
@@ -35,6 +45,11 @@ function LoginForm() {
         clearForm();
       };
 
+      setResponseMessage(response.message);
+      setTimeout(()=> {
+          console.log("reload in settimeout")
+          window.location.reload()}, 3000);
+
     } catch (error) {
       console.error("login error line 28", error);
     };
@@ -55,6 +70,11 @@ function LoginForm() {
         alert(response.message);
         clearForm();
       };
+      
+      setResponseMessage(response.message);
+      setTimeout(()=> {
+          console.log("reload in settimeout")
+          window.location.reload()}, 3000);
 
     } catch (error) {
       console.error("signup error line 60", error);
@@ -63,6 +83,7 @@ function LoginForm() {
 
   return (
     <form className="login-form" id="login-form" action="/login" method="POST">
+      <fieldset disabled={disableForm}>
         <label htmlFor="username">Username:</label>
         <input 
           username="username" 
@@ -84,7 +105,8 @@ function LoginForm() {
           <button onClick={handleLogin}>Log in</button>
           <button onClick={handleSignUp}>Sign up</button>
         </div>
-        
+        <p><i>{responseMessage}</i></p>
+      </fieldset>
     </form>
   );
 }

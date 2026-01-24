@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"log"
 	"errors"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/traceylum1/travel-journal/internal/models"
@@ -45,15 +46,18 @@ func (h *UserHandler) CreateUser(c *gin.Context) {
 		return
 	}
 
-	c.SetCookie(
-		"session_id", // name
-		"abc123",     // value
-		3600,         // maxAge (seconds)
-		"/",          // path
-		"example.com",// domain ("" = current domain)
-		true,         // secure
-		true,         // httpOnly
-	)
+    c.SetCookieData(&http.Cookie{
+      Name:   "session_id",
+      Value:  "abc123",
+      Path:   "/",
+      Domain:   "localhost",
+      Expires:  time.Now().Add(24 * time.Hour),
+      MaxAge:   86400,
+      Secure:   true,
+      HttpOnly: true,
+      SameSite: http.SameSiteLaxMode,
+      // Partitioned: true, // Go 1.22+
+    })
 
 	c.JSON(http.StatusOK, gin.H{"status": "new user created"})
 }
@@ -88,15 +92,18 @@ func (h *UserHandler) UserLogin(c *gin.Context) {
 		return
 	}
 
-	c.SetCookie(
-		"session_id", // name
-		"abc123",     // value
-		3600,         // maxAge (seconds)
-		"/",          // path
-		"example.com",// domain ("" = current domain)
-		true,         // secure
-		true,         // httpOnly
-	)
+    c.SetCookieData(&http.Cookie{
+      Name:   "session_id",
+      Value:  "abc123",
+      Path:   "/",
+      Domain:   "localhost",
+      Expires:  time.Now().Add(24 * time.Hour),
+      MaxAge:   86400,
+      Secure:   true,
+      HttpOnly: true,
+      SameSite: http.SameSiteLaxMode,
+      // Partitioned: true, // Go 1.22+
+    })
 
     c.JSON(http.StatusOK, gin.H{"status": "logged in"})
 }
