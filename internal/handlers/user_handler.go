@@ -41,8 +41,8 @@ func (h *UserHandler) CreateUser(c *gin.Context) {
 		})
 	}
 
-	if err := h.repo.CreateUser(c.Request.Context(), &input); err != nil {
-		log.Printf("error: %v", err)
+	userID, err := h.repo.CreateUser(c.Request.Context(), &input)
+	if err != nil {
 		c.JSON(http.StatusConflict, gin.H{"error": "username already exists"})
 		return
 	}
@@ -60,7 +60,12 @@ func (h *UserHandler) CreateUser(c *gin.Context) {
       // Partitioned: true, // Go 1.22+
     })
 
-	c.JSON(http.StatusOK, gin.H{"status": "new user created"})
+	c.JSON(http.StatusCreated, gin.H{
+		"user": gin.H{
+			"id": userID,
+			"username": input.Username,
+		},
+	})
 }
 
 func (h *UserHandler) UserLogin(c *gin.Context) {
