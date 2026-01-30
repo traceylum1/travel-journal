@@ -23,6 +23,62 @@ func generateSessionId() string {
 	return base64.RawURLEncoding.EncodeToString(id)
 }
 
+
+type InMemorySessionStore struct {
+	SessionStore
+	mu       sync.RWMutex
+	sessions map[string]*Session
+}
+
+func NewInMemorySessionStore() *InMemorySessionStore {
+	return &InMemorySessionStore{
+		sessions: make(map[string]*Session),
+	}
+}
+
+func (s *InMemorySessionStore) read(id string) (*Session, error) {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+
+	session, _ := s.sessions[id]
+
+	return session, nil
+}
+
+func (s *InMemorySessionStore) write(session *Session) error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	s.sessions[session.id] = session
+
+	return nil
+}
+
+func (s *InMemorySessionStore) destroy(id string) error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	delete(s.sessions, id)
+
+	return nil
+}
+
+func (s *InMemorySessionStore) gc(idleExpiration, absoluteExpiration time.Duration) error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	for id, session := range s.sessions {
+		if time.Since(session.lastActivityAt) > idleExpiration ||
+			time.Since(session.createdAt) > absoluteExpiration {
+			delete(s.sessions, id)
+		}
+	}
+
+	return nil
+}
+
+
+
 type Session struct {
 	createdAt		time.Time
 	lastActivityAt	time.Time
@@ -46,6 +102,7 @@ type SessionManager struct {
 }
 
 func newSession() *Session {
+	log.Println("newSession")
 	return &Session{
 		id:             generateSessionId(),
 		data:           make(map[string]any),
@@ -94,7 +151,8 @@ func (m *SessionManager) gc(d time.Duration) {
 	}
 }
 
-func (m *SessionManager) validate(session *Session) bool {
+func (m *SessionManager) validate(session *Session) bool {log.Println("session start")
+	log.Println("session validate")
 	if time.Since(session.createdAt) > m.absoluteExpiration ||
 		time.Since(session.lastActivityAt) > m.idleExpiration {
         
@@ -113,6 +171,7 @@ func (m *SessionManager) validate(session *Session) bool {
 func (m *SessionManager) start(c *gin.Context) (*Session, *gin.Context) {
 	var session *Session
 
+	log.Println("session start")
     // Read From Cookie
 	cookie, err := c.Cookie(m.cookieName)
 	if err == nil {
@@ -135,6 +194,8 @@ func (m *SessionManager) start(c *gin.Context) (*Session, *gin.Context) {
 
 
 func (m *SessionManager) save(session *Session) error {
+	log.Println("session save")
+	log.Println(session.id, session.createdAt)
 	session.lastActivityAt = time.Now()
 
 	err := m.store.write(session)
@@ -160,9 +221,12 @@ func (m *SessionManager) migrate(session *Session) error {
 }
 
 
-func  (m *SessionManager) Handle() gin.HandlerFunc {
+func (m *SessionManager) Handle() gin.HandlerFunc {
 	return func(c *gin.Context) {
-
+		path := c.FullPath()
+		if path == "/login" || path == "/register" {
+			c.Next()
+		}
 		// Start the session
 		session, rws := m.start(c)
 

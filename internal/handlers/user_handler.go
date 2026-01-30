@@ -4,7 +4,6 @@ import (
 	"net/http"
 	"log"
 	"errors"
-	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/traceylum1/travel-journal/internal/models"
@@ -47,19 +46,6 @@ func (h *UserHandler) CreateUser(c *gin.Context) {
 		return
 	}
 
-    c.SetCookieData(&http.Cookie{
-      Name:   "session_id",
-      Value:  "abc123",
-      Path:   "/",
-      Domain:   "localhost",
-      Expires:  time.Now().Add(24 * time.Hour),
-      MaxAge:   86400,
-      Secure:   true,
-      HttpOnly: true,
-      SameSite: http.SameSiteLaxMode,
-      // Partitioned: true, // Go 1.22+
-    })
-
 	c.JSON(http.StatusCreated, gin.H{
 		"user": gin.H{
 			"id": userID,
@@ -97,19 +83,6 @@ func (h *UserHandler) UserLogin(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to validate user"})
 		return
 	}
-
-    c.SetCookieData(&http.Cookie{
-      Name:   "session_id",
-      Value:  "abc123",
-      Path:   "/",
-      Domain:   "localhost",
-      Expires:  time.Now().Add(24 * time.Hour),
-      MaxAge:   86400,
-      Secure:   true,
-      HttpOnly: true,
-      SameSite: http.SameSiteLaxMode,
-      // Partitioned: true, // Go 1.22+
-    })
 
     c.JSON(http.StatusOK, gin.H{"status": "logged in"})
 }
