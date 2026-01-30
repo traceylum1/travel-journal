@@ -3,6 +3,7 @@ package main
 import (
     "context"
     "log"
+    "net/http"
 
     "github.com/traceylum1/travel-journal/internal/db"
     "github.com/traceylum1/travel-journal/internal/repository"
@@ -26,5 +27,10 @@ func main() {
 
     router := router.NewRouter(userHandler, markerHandler)
 
-    router.Run(":8080")
+    server := &http.Server{
+        Addr:    ":8080",
+        Handler: router,
+    }
+
+    server.ListenAndServe()
 }
