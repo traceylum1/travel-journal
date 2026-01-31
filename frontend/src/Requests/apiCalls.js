@@ -2,7 +2,7 @@
 const apiCalls = {
     login: async function ({ username, password }) {
         try {
-            const response = await fetch("/api/login", {
+            const response = await fetch("api/auth/login", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -43,7 +43,7 @@ const apiCalls = {
 
     register: async function ({ username, password }) {
         try {
-            const response = await fetch("/api/register", {
+            const response = await fetch("api/auth/register", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -85,7 +85,7 @@ const apiCalls = {
     // TODO: Make createTrip endpoint
     // createTrip: async function ({ tripId, markerLocation, markerDescription, markerDate, markerLat, markerLng, username }) {
     //     try {
-    //         const response = await fetch("/api/createTrip", {
+    //         const response = await fetch("/api/protected/createTrip", {
     //             method: "POST",
     //             body: JSON.stringify({ 
     //                 location: markerLocation, 
@@ -111,7 +111,7 @@ const apiCalls = {
     
     addMarker: async function ({ tripId, markerLocation, markerDescription, markerDate, markerLat, markerLng, username }) {
         try {
-            const response = await fetch("/api/addMarker", {
+            const response = await fetch("/api/protected/addMarker", {
                 method: "POST",
                 body: JSON.stringify({ 
                     trip_id: Number(tripId), 
