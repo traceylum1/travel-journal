@@ -40,10 +40,10 @@ func (r *UserRepository) CreateUser(
         if errors.As(err, &pgErr) {
             // 23505 is the code for unique_violation
             if pgErr.Code == "23505" {
-                return 0, ErrUserAlreadyExists
+                return 0, fmt.Errorf("duplicate username: %w", ErrUserAlreadyExists)
             }
         }
-        return 0, ErrInternal
+        return 0, fmt.Errorf("create user: %w", ErrInternal)
     }
 
 	return userID, nil
@@ -72,9 +72,9 @@ func (r *UserRepository) GetUserByUsername(
 	if err != nil {
 		// user does not exist
 		if errors.Is(err, pgx.ErrNoRows) {
-			return user, ErrUserNotFound
+			return models.User{}, fmt.Errorf("get user: %w", ErrUserNotFound)
 		}
-		return user, err
+		return models.User{}, fmt.Errorf("get user: %w", ErrInternal)
 	}
 
 	return user, nil
@@ -92,5 +92,9 @@ func (r *UserRepository) GetTrips(
 		username,
 	).Scan(&trips)
 
-	return &trips, err
+	if err != nil {
+		return nil, fmt.Errorf("get trips: %w", ErrInternal)
+	}
+
+	return &trips, nil
 }
