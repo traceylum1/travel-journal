@@ -20,8 +20,6 @@ func NewUserRepository(db *pgxpool.Pool) *UserRepository {
 	return &UserRepository{db: db}
 }
 
-var ErrUserNotFound = errors.New("user not found")
-
 func (r *UserRepository) CreateUser(
 	ctx context.Context, 
 	u *models.AuthenticationInput,
@@ -42,15 +40,13 @@ func (r *UserRepository) CreateUser(
         if errors.As(err, &pgErr) {
             // 23505 is the code for unique_violation
             if pgErr.Code == "23505" {
-                fmt.Println("Duplicate key violation")
-                return -1, pgErr
+                return 0, ErrUserAlreadyExists
             }
         }
-		fmt.Fprintf(os.Stderr, "Create new user failed: %v\n", err)
-        return -1, pgErr
+        return 0, ErrInternal
     }
 
-	return userID, err
+	return userID, nil
 }
 
 
@@ -73,7 +69,6 @@ func (r *UserRepository) GetUserByUsername(
 		&user.CreatedAt,
 	)
 
-	fmt.Println("user", user)
 	if err != nil {
 		// user does not exist
 		if errors.Is(err, pgx.ErrNoRows) {

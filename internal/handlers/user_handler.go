@@ -49,16 +49,24 @@ func (h *UserHandler) CreateUser(c *gin.Context) {
 
 	userID, err := h.repo.CreateUser(c.Request.Context(), &input)
 	if err != nil {
-		c.JSON(http.StatusConflict, gin.H{"error": "username already exists"})
+		switch {
+		case errors.Is(err, repository.ErrUserAlreadyExists):
+			c.JSON(http.StatusConflict, gin.H{
+				"error": "username already exists",
+			})
+		case errors.Is(err, repository.ErrInternal):
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error": "internal server error",
+			})
+		default:
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error": "unexpected error",
+			})
+		}
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{
-		"user": gin.H{
-			"id": userID,
-			"username": input.Username,
-		},
-	})
+	c.JSON(http.StatusCreated, gin.H{"user_id": userID})
 }
 
 func (h *UserHandler) UserLogin(c *gin.Context) {
