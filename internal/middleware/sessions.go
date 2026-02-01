@@ -151,7 +151,7 @@ func (m *SessionManager) gc(d time.Duration) {
 	}
 }
 
-func (m *SessionManager) validate(session *Session) bool {log.Println("session start")
+func (m *SessionManager) validate(session *Session) bool {
 	log.Println("session validate")
 	if time.Since(session.createdAt) > m.absoluteExpiration ||
 		time.Since(session.lastActivityAt) > m.idleExpiration {
@@ -181,9 +181,20 @@ func (m *SessionManager) start(c *gin.Context) (*Session, *gin.Context) {
 		}
 	}
 
-    // Generate a new session
+    // If no session or not valid, delete cookie and log user out
 	if session == nil || !m.validate(session) {
-		session = newSession()
+		c.SetCookieData(&http.Cookie{
+			Name:   "session_id",
+			Value:  "delete",
+			Path:   "/",
+			Domain:   "localhost",
+			MaxAge:   -1,
+			Secure:   true,
+			HttpOnly: true,
+			SameSite: http.SameSiteLaxMode,
+			// Partitioned: true, // Go 1.22+
+		})
+		return nil, c
 	}
 
     // Attach session to context
@@ -223,12 +234,11 @@ func (m *SessionManager) migrate(session *Session) error {
 
 func (m *SessionManager) Handle() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		path := c.FullPath()
-		if path == "/login" || path == "/register" {
-			c.Next()
-		}
 		// Start the session
 		session, rws := m.start(c)
+		if session == nil {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "missing or invalid session"})
+		}
 
 		// Create a new response writer
 		sw := &sessionResponseWriter{

@@ -22,7 +22,7 @@ func NewUserHandler(repo *repository.UserRepository) *UserHandler {
 
 
 func (h *UserHandler) CreateUser(c *gin.Context) {
-	var input models.CreateUserInput
+	var input models.AuthenticationInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
 		return
@@ -32,12 +32,19 @@ func (h *UserHandler) CreateUser(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "username must be 5 to 15 chars and contain only lowercase letters, numbers, or underscores",
 		})
+		return
 	}
 
 	if !validation.IsPasswordValid(input.Password) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "password must be 8 to 20 chars, include include upper, lower, digit, and special characters",
 		})
+		return
+	}
+
+	if err := input.HashPassword(); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to hash password"})
+		return
 	}
 
 	userID, err := h.repo.CreateUser(c.Request.Context(), &input)
@@ -55,7 +62,7 @@ func (h *UserHandler) CreateUser(c *gin.Context) {
 }
 
 func (h *UserHandler) UserLogin(c *gin.Context) {
-	var input models.LoginRequest
+	var input models.AuthenticationInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
 		return
@@ -65,21 +72,31 @@ func (h *UserHandler) UserLogin(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "username must be 5 to 15 chars and contain only lowercase letters, numbers, or underscores",
 		})
+		return
 	}
 
 	if !validation.IsPasswordValid(input.Password) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "password must be 8 to 20 chars, include include upper, lower, digit, and special characters",
 		})
+		return
 	}
 
-	err := h.repo.ValidateUser(c.Request.Context(), input.Username, input.Password)
+	user, err := h.repo.GetUserByUsername(c.Request.Context(), input.Username)
 	if err != nil {
-		if errors.Is(err, repository.ErrInvalidCredentials) {
-			log.Printf("Validate error: %v", err)
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "user credentials not valid"})
+		if errors.Is(err, repository.ErrUserNotFound) {
+			log.Printf("Username error: %v", err)
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "username not found"})
 			return
 		}
+
+		if err = user.ValidatePassword(input.Password); err != nil {
+			// wrong password
+			log.Printf("Password error: %v", err)
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "incorrect password"})
+			return
+		}
+		
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to validate user"})
 		return
 	}

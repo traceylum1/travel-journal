@@ -10,7 +10,6 @@ import (
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/traceylum1/travel-journal/internal/models"
-	"golang.org/x/crypto/bcrypt"
 )
 
 type UserRepository struct {
@@ -21,30 +20,20 @@ func NewUserRepository(db *pgxpool.Pool) *UserRepository {
 	return &UserRepository{db: db}
 }
 
-var ErrInvalidCredentials = errors.New("invalid credentials")
+var ErrUserNotFound = errors.New("user not found")
 
 func (r *UserRepository) CreateUser(
 	ctx context.Context, 
-	u *models.CreateUserInput,
+	u *models.AuthenticationInput,
 ) (int, error) {
-	// Hash password (automatic salting)
-	hash, err := bcrypt.GenerateFromPassword(
-		[]byte(u.Password),
-		bcrypt.DefaultCost,
-	)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Failed to hash password: %v\n", err)
-		return -1, err
-	}
-
 	var userID int
 
-	err = r.db.QueryRow(
-        context.Background(), 
+	err := r.db.QueryRow(
+        ctx, 
         `INSERT INTO users (username, password_hash)
         VALUES ($1, $2)
 		RETURNING user_id`,
-    	u.Username, hash,
+    	u.Username, u.Password,
     ).Scan(&userID)
 	
 	if err != nil {
@@ -65,40 +54,35 @@ func (r *UserRepository) CreateUser(
 }
 
 
-func (r *UserRepository) ValidateUser(
+func (r *UserRepository) GetUserByUsername(
 	ctx context.Context,
 	username string,
-	password string,
-) error {
-	var passwordHash string
+) (models.User, error) {
+	var user models.User
 
 	err := r.db.QueryRow(
 		ctx,
-		`SELECT password_hash
+		`SELECT user_id, username, password_hash, created_at
 		 FROM users
 		 WHERE username = $1`,
 		username,
-	).Scan(&passwordHash)
+	).Scan(
+		&user.ID,
+		&user.Username,
+		&user.PasswordHash,
+		&user.CreatedAt,
+	)
 
+	fmt.Println("user", user)
 	if err != nil {
 		// user does not exist
 		if errors.Is(err, pgx.ErrNoRows) {
-			return ErrInvalidCredentials
+			return user, ErrUserNotFound
 		}
-		return err
+		return user, err
 	}
 
-	err = bcrypt.CompareHashAndPassword(
-		[]byte(passwordHash),
-		[]byte(password),
-	)
-
-	if err != nil {
-		// wrong password
-		return ErrInvalidCredentials
-	}
-
-	return nil
+	return user, nil
 }
 
 
