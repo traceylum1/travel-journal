@@ -9,7 +9,7 @@ import (
     "github.com/traceylum1/travel-journal/internal/repository"
     "github.com/traceylum1/travel-journal/internal/handlers"
     "github.com/traceylum1/travel-journal/internal/router"
-    "github.com/traceylum1/travel-journal/internal/middleware"
+    "github.com/traceylum1/travel-journal/internal/session"
 )
 
 func main() {
@@ -21,8 +21,8 @@ func main() {
 	}
 	defer pool.Close()
 
-    sessionManager := middleware.NewSessionManager(
-        middleware.NewInMemorySessionStore(),
+    sessionManager := session.NewSessionManager(
+        session.NewInMemorySessionStore(),
         10,
         10,
         20,

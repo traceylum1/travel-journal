@@ -2,7 +2,6 @@ package session
 
 import (
 	"crypto/rand"
-	"net/http"
 	"time"
 	"encoding/base64"
 	"io"
@@ -86,41 +85,6 @@ func (m *Manager) validate(session *Session) bool {
 	return true
 }
 
-func (m *Manager) start(c *gin.Context) (*Session, *gin.Context) {
-	var session *Session
-
-	log.Println("session start")
-    // Read From Cookie
-	cookie, err := c.Cookie(m.cookieName)
-	if err == nil {
-		session, err = m.store.read(cookie)
-		if err != nil {
-			log.Printf("Failed to read session from store: %v", err)
-		}
-	}
-
-    // If no session or not valid, delete cookie and log user out
-	if session == nil || !m.validate(session) {
-		c.SetCookieData(&http.Cookie{
-			Name:   "session_id",
-			Value:  "delete",
-			Path:   "/",
-			Domain:   "localhost",
-			MaxAge:   -1,
-			Secure:   true,
-			HttpOnly: true,
-			SameSite: http.SameSiteLaxMode,
-			// Partitioned: true, // Go 1.22+
-		})
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "missing or invalid session"})
-		return nil, c
-	}
-
-    // Attach session to context
-	c.Set("session", session)
-
-	return session, c
-}
 
 func (m *Manager) save(session *Session) error {
 	log.Println("session save")
@@ -136,16 +100,16 @@ func (m *Manager) save(session *Session) error {
 }
 
 
-func (m *Manager) Handle() gin.HandlerFunc {
+func (m *Manager) Create() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// Start the session
-		session, rws := m.start(c)
+		session := newSession()
 
 		// Create a new response writer
 		sw := &sessionResponseWriter{
 			ResponseWriter: c.Writer,
 			sessionManager: m,
-			c:              rws,
+			c:              c,
 		}
 
 		// Replace original response writer with custom response writer
@@ -155,8 +119,6 @@ func (m *Manager) Handle() gin.HandlerFunc {
 		c.Header("Vary", "Cookie")
 		c.Header("Cache-Control", `no-cache="Set-Cookie"`)
 
-		// Call the next handler
-		c.Next()
 		// Save the session
 		m.save(session)
 

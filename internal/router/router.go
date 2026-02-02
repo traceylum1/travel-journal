@@ -6,17 +6,17 @@ import (
 	"github.com/traceylum1/travel-journal/internal/session"
 )
 
-func NewRouter(userHandler *handlers.UserHandler, markerHandler *handlers.MarkerHandler, sessionManager *session.Manager) *gin.Engine {
+func NewRouter(userHandler *handlers.UserHandler, markerHandler *handlers.MarkerHandler, sm *session.Manager) *gin.Engine {
 	r := gin.Default()
-	r.Use(sessionManager.Handle())
 
-	publicRoutes := r.Group("/api/auth")
-	publicRoutes.POST("register", userHandler.CreateUser)
-	publicRoutes.POST("login", userHandler.UserLogin)
+	auth := r.Group("/api/auth")
+	auth.POST("register", userHandler.CreateUser(sm))
+	auth.POST("login", userHandler.UserLogin(sm))
 
-	protectedRoutes := r.Group("/api/protected")
-	protectedRoutes.POST("addMarker", markerHandler.CreateMarker)
-	protectedRoutes.GET("user/:username", userHandler.GetUserTrips)
+	protected := r.Group("/api/protected")
+	protected.Use(session.Required(sm))
+	protected.POST("addMarker", markerHandler.CreateMarker)
+	protected.GET("user/:username", userHandler.GetUserTrips)
 
 	return r
 }
