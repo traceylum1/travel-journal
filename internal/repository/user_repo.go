@@ -3,7 +3,6 @@ package repository
 import (
 	"context"
 	"fmt"
-	"os"
 	"errors"
 
 	"github.com/jackc/pgx/v5/pgconn"

@@ -24,6 +24,34 @@ func generateSessionId() string {
 }
 
 
+type Session struct {
+	createdAt		time.Time
+	lastActivityAt	time.Time
+	id				string
+	data			map[string]any
+}
+
+func (s *Session) Get(key string) any {
+	return s.data[key]
+}
+
+func (s *Session) Put(key string, value any) {
+	s.data[key] = value
+}
+
+func (s *Session) Delete(key string) {
+	delete(s.data, key)
+}
+
+
+
+type SessionStore interface {
+	read(id string) (*Session, error)
+	write(session *Session) error
+	destroy(id string) error
+	gc(idleExpiration, absoluteExpiration time.Duration) error
+}
+
 type InMemorySessionStore struct {
 	SessionStore
 	mu       sync.RWMutex
@@ -78,22 +106,6 @@ func (s *InMemorySessionStore) gc(idleExpiration, absoluteExpiration time.Durati
 }
 
 
-
-type Session struct {
-	createdAt		time.Time
-	lastActivityAt	time.Time
-	id				string
-	data			map[string]any
-	mu				sync.RWMutex
-}
-
-type SessionStore interface {
-	read(id string) (*Session, error)
-	write(session *Session) error
-	destroy(id string) error
-	gc(idleExpiration, absoluteExpiration time.Duration) error
-}
-
 type SessionManager struct {
 	store              SessionStore
 	idleExpiration     time.Duration
@@ -102,25 +114,12 @@ type SessionManager struct {
 }
 
 func newSession() *Session {
-	log.Println("newSession")
 	return &Session{
 		id:             generateSessionId(),
 		data:           make(map[string]any),
 		createdAt:      time.Now(),
 		lastActivityAt: time.Now(),
 	}
-}
-
-func (s *Session) Get(key string) any {
-	return s.data[key]
-}
-
-func (s *Session) Put(key string, value any) {
-	s.data[key] = value
-}
-
-func (s *Session) Delete(key string) {
-	delete(s.data, key)
 }
 
 
@@ -218,9 +217,6 @@ func (m *SessionManager) save(session *Session) error {
 }
 
 func (m *SessionManager) migrate(session *Session) error {
-	session.mu.Lock()
-	defer session.mu.Unlock()
-
 	err := m.store.destroy(session.id)
 	if err != nil {
 		return err
@@ -247,6 +243,9 @@ func (m *SessionManager) Handle() gin.HandlerFunc {
 			c:              rws,
 		}
 
+		// Replace original response writer with custom response writer
+		c.Writer = sw
+
 		// Add essential headers
 		c.Header("Vary", "Cookie")
 		c.Header("Cache-Control", `no-cache="Set-Cookie"`)
@@ -257,7 +256,7 @@ func (m *SessionManager) Handle() gin.HandlerFunc {
 		m.save(session)
 
 		// Write the session cookie to the response if not already written
-		writeCookieIfNecessary(sw)
+		sw.writeCookieIfNecessary()
 	}
 }
 
@@ -269,22 +268,27 @@ type sessionResponseWriter struct {
 }
 
 func (w *sessionResponseWriter) Write(b []byte) (int, error) {
-	writeCookieIfNecessary(w)
+	w.writeCookieIfNecessary()
 
 	return w.ResponseWriter.Write(b)
 }
 
 func (w *sessionResponseWriter) WriteHeader(code int) {
-	writeCookieIfNecessary(w)
+	w.writeCookieIfNecessary()
 
 	w.ResponseWriter.WriteHeader(code)
+}
+
+func (w *sessionResponseWriter) WriteHeaderNow() {
+	w.writeCookieIfNecessary()
+	w.ResponseWriter.WriteHeaderNow()
 }
 
 func (w *sessionResponseWriter) Unwrap() http.ResponseWriter {
 	return w.ResponseWriter
 }
 
-func writeCookieIfNecessary(w *sessionResponseWriter) {
+func (w *sessionResponseWriter) writeCookieIfNecessary() {
 	if w.done {
 		return
 	}
