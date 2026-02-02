@@ -24,6 +24,7 @@ func Required(m *Manager) gin.HandlerFunc {
 
 		// If no session or not valid, delete cookie and log user out
 		if session == nil || !m.validate(session) {
+			log.Printf("session not found or invalid")
 			c.SetCookieData(&http.Cookie{
 				Name:   "session_id",
 				Value:  "delete",

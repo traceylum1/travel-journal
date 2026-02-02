@@ -10,7 +10,7 @@ type CreateMarkerInput struct {
     Date        utility.DateOnly    `json:"date" db:"date"`
     Latitude    float64             `json:"latitude" db:"latitude"`
     Longitude   float64             `json:"longitude" db:"longitude"`
-    CreatedBy   int                 `json:"created_by" db:"created_by"`
+    CreatedBy   string              `json:"created_by" db:"created_by"`
 }
 
 // Marker represents the stored data about a marker that was placed on the map
@@ -22,5 +22,5 @@ type Marker struct {
     Date        utility.DateOnly    `json:"date" db:"date"`
     Latitude    float64             `json:"latitude" db:"latitude"`
     Longitude   float64             `json:"longitude" db:"longitude"`
-    CreatedBy   int                 `json:"created_by" db:"created_by"`
+    CreatedBy   string              `json:"created_by" db:"created_by"`
 }

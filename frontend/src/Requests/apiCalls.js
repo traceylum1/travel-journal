@@ -123,13 +123,14 @@ const apiCalls = {
                     created_by: username 
                 }),
             });
-            console.log("response", response);
-            if (!response.ok) {
-                throw new Error(`Response status: ${response.status}`);
-            }
 
-            const result = await response.json();
-            console.log(result);
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || "Unknown server error");
+            }
+            
+            console.log(data);
         } catch (error) {
             console.error(error.message);
         }

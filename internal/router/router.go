@@ -15,8 +15,8 @@ func NewRouter(userHandler *handlers.UserHandler, markerHandler *handlers.Marker
 
 	protected := r.Group("/api/protected")
 	protected.Use(session.Required(sm))
-	protected.POST("addMarker", markerHandler.CreateMarker)
-	protected.GET("user/:username", userHandler.GetUserTrips)
+	protected.POST("addMarker", markerHandler.CreateMarker())
+	protected.GET("user/:username", userHandler.GetUserTrips())
 
 	return r
 }
