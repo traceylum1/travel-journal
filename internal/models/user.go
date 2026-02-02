@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"golang.org/x/crypto/bcrypt"
+	
 )
 
 // AuthenticationInput represents the user input data sent to the backend to login or create the user

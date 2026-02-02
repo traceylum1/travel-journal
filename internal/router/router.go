@@ -8,13 +8,13 @@ import (
 
 func NewRouter(userHandler *handlers.UserHandler, markerHandler *handlers.MarkerHandler, sessionManager *middleware.SessionManager) *gin.Engine {
 	r := gin.Default()
+	r.Use(sessionManager.Handle())
 
 	publicRoutes := r.Group("/api/auth")
 	publicRoutes.POST("register", userHandler.CreateUser)
 	publicRoutes.POST("login", userHandler.UserLogin)
 
 	protectedRoutes := r.Group("/api/protected")
-	protectedRoutes.Use(sessionManager.Handle())
 	protectedRoutes.POST("addMarker", markerHandler.CreateMarker)
 	protectedRoutes.GET("user/:username", userHandler.GetUserTrips)
 
