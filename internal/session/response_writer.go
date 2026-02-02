@@ -10,7 +10,7 @@ import (
 
 type sessionResponseWriter struct {
 	gin.ResponseWriter
-	sessionManager *SessionManager
+	sessionManager *Manager
 	c              *gin.Context
 	done           bool
 }

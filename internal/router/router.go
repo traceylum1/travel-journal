@@ -3,10 +3,10 @@ package router
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/traceylum1/travel-journal/internal/handlers"
-	"github.com/traceylum1/travel-journal/internal/middleware"
+	"github.com/traceylum1/travel-journal/internal/session"
 )
 
-func NewRouter(userHandler *handlers.UserHandler, markerHandler *handlers.MarkerHandler, sessionManager *middleware.SessionManager) *gin.Engine {
+func NewRouter(userHandler *handlers.UserHandler, markerHandler *handlers.MarkerHandler, sessionManager *session.Manager) *gin.Engine {
 	r := gin.Default()
 	r.Use(sessionManager.Handle())
 

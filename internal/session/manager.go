@@ -13,8 +13,8 @@ import (
 
 
 
-type SessionManager struct {
-	store              SessionStore
+type Manager struct {
+	store              Store
 	idleExpiration     time.Duration
 	absoluteExpiration time.Duration
 	cookieName         string
@@ -43,13 +43,13 @@ func newSession() *Session {
 
 
 func NewSessionManager(
-	store SessionStore,
+	store Store,
 	gcInterval,
 	idleExpiration,
 	absoluteExpiration time.Duration,
-	cookieName string) *SessionManager {
+	cookieName string) *Manager {
 
-	m := &SessionManager{
+	m := &Manager{
 		store:              store,
 		idleExpiration:     idleExpiration,
 		absoluteExpiration: absoluteExpiration,
@@ -61,7 +61,7 @@ func NewSessionManager(
 	return m
 }
 
-func (m *SessionManager) gc(d time.Duration) {
+func (m *Manager) gc(d time.Duration) {
 	ticker := time.NewTicker(d)
 
 	for range ticker.C {
@@ -69,7 +69,7 @@ func (m *SessionManager) gc(d time.Duration) {
 	}
 }
 
-func (m *SessionManager) validate(session *Session) bool {
+func (m *Manager) validate(session *Session) bool {
 	log.Println("session validate")
 	if time.Since(session.createdAt) > m.absoluteExpiration ||
 		time.Since(session.lastActivityAt) > m.idleExpiration {
@@ -86,7 +86,7 @@ func (m *SessionManager) validate(session *Session) bool {
 	return true
 }
 
-func (m *SessionManager) start(c *gin.Context) (*Session, *gin.Context) {
+func (m *Manager) start(c *gin.Context) (*Session, *gin.Context) {
 	var session *Session
 
 	log.Println("session start")
@@ -122,7 +122,7 @@ func (m *SessionManager) start(c *gin.Context) (*Session, *gin.Context) {
 	return session, c
 }
 
-func (m *SessionManager) save(session *Session) error {
+func (m *Manager) save(session *Session) error {
 	log.Println("session save")
 	log.Println(session.id, session.createdAt)
 	session.lastActivityAt = time.Now()
@@ -136,7 +136,7 @@ func (m *SessionManager) save(session *Session) error {
 }
 
 
-func (m *SessionManager) Handle() gin.HandlerFunc {
+func (m *Manager) Handle() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		// Start the session
 		session, rws := m.start(c)

@@ -5,7 +5,7 @@ import (
 	"sync"
 )
 
-type SessionStore interface {
+type Store interface {
 	read(id string) (*Session, error)
 	write(session *Session) error
 	destroy(id string) error
@@ -13,7 +13,7 @@ type SessionStore interface {
 }
 
 type InMemorySessionStore struct {
-	SessionStore
+	Store
 	mu       sync.RWMutex
 	sessions map[string]*Session
 }
