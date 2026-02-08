@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import List from "./List";
+import CountryList from "./CountryList";
 import Trie from "./Trie";
 
 
@@ -14,7 +14,7 @@ function CreateTripBtn() {
         trie.insert(data[i]);
     }
 
-    function handleInput(e) {
+    function handleInput(e: React.ChangeEvent<HTMLInputElement>) {
         const { value } = e.target;
         setInput(value);
     }
@@ -35,7 +35,7 @@ function CreateTripBtn() {
             { inputVisible ? 
                 <>
                     <input className="country-name" onInput={handleInput} />
-                    <List trie={trie} input={input} setInput={setInput} />
+                    <CountryList trie={trie} input={input} setInput={setInput} />
                 </> : null
             }
         </div>

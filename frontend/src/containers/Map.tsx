@@ -4,9 +4,10 @@ import 'leaflet/dist/leaflet.css';
 import 'leaflet-geosearch/dist/geosearch.css';
 import * as GeoSearch from 'leaflet-geosearch';
 import eventHandlers from '../EventHandlers/markerHandlers';
+import { MapProps } from '../Types/Props';
 
 
-function Map({ addMarker, setAddMarker }) {
+function Map({ addMarker, setAddMarker }: MapProps) {
   const mapRef = useRef(null);
 
   useEffect(() => {
