@@ -34,6 +34,7 @@ function App() {
         <Map
           addMarker={addMarker}
           setAddMarker={setAddMarker}
+          tripID={tripDisplay}
           />
     </div>
   

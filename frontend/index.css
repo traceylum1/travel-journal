@@ -11,7 +11,7 @@ body {
 }
 
 html {
-    background-color:rgb(29, 29, 29);
+    background-color:rgb(37, 37, 37);
 }
 
 .app {
@@ -53,8 +53,9 @@ fieldset {
     width: 95%;
     flex: 1;
     overflow: auto;
-    border-style: dashed;
-    background-color: antiquewhite;
+    margin-bottom: 8px;
+    border-radius: 10px;
+    background-color: rgb(220, 207, 207);
 }
 
 .trip-list-header {
@@ -67,8 +68,9 @@ fieldset {
 .trip-display {
     width: 95%;
     flex: 1;
-    background-color: aquamarine;
-    border-style: dashed;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    background-color: rgb(220, 207, 207);
 }
 
 .trip-display-header {
