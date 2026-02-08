@@ -1,8 +1,13 @@
+import CreateTripBtn from "../Controls/CreateTrip/CreateTripBtn";
 
 function TripList({setTripDisplay}) {
     return (
         <div className="trip-list">
-            <h2>Your Trips</h2>
+            <div className="trip-list-header">
+                <h2>Your Trips</h2>
+                <CreateTripBtn/>
+            </div>
+            
             <ul className="trip-items">
                 <li onClick={() => setTripDisplay("Belize")}>Belize</li>
                 <li onClick={() => setTripDisplay("Kenya")}>Kenya</li>

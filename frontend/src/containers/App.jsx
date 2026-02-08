@@ -16,16 +16,18 @@ function App() {
 
       <div id="main-left">
         <h1 id="header">Travel Journal</h1>
-        <Controls
+        {/* <Controls
           addMarker={addMarker}
           setAddMarker={setAddMarker}
-        />
+        /> */}
         <TripList
           setTripDisplay={setTripDisplay}
         />
         { tripDisplay ?
           <Trip
             tripDisplay={tripDisplay}
+            addMarker={addMarker}
+            setAddMarker={setAddMarker}
           /> : null 
         }
       </div>

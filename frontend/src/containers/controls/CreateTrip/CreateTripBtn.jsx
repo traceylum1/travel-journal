@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import Input from "./Input";
 import List from "./List";
 import Trie from "./Trie";
 
@@ -31,11 +30,11 @@ function CreateTripBtn() {
                     backgroundColor: inputVisible ? "gray" : "white",
                 }}
             >
-                create new trip
+                create trip
             </button>
             { inputVisible ? 
                 <>
-                    <Input handleInput={handleInput} />
+                    <input className="country-name" onInput={handleInput} />
                     <List trie={trie} input={input} setInput={setInput} />
                 </> : null
             }

@@ -57,11 +57,25 @@ fieldset {
     background-color: antiquewhite;
 }
 
+.trip-list-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 8px;
+}
+
 .trip-display {
     width: 95%;
     flex: 1;
     background-color: aquamarine;
     border-style: dashed;
+}
+
+.trip-display-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 8px;
 }
 
 .trip-items {
@@ -84,7 +98,6 @@ fieldset {
     border-radius: 8px;
     width: 100%;
     padding: 8px;
-    margin: 6px 0px;
 }
 
 #map {
