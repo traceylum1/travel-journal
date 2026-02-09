@@ -1,6 +1,6 @@
 // BUG: marker color buggy, doesn't change back to default when clicking on map to add marker, even tho the useState value is correctly switched
 
-import { AddMarkerBtnProps } from "../../Types/Props";
+import { AddMarkerBtnProps } from '../../Types/Props';
 
 function AddMarkerBtn({addMarker, setAddMarker}: AddMarkerBtnProps) {
     

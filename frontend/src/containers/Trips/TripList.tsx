@@ -1,5 +1,5 @@
-import { TripListProps } from "../../Types/Props";
-import CreateTripBtn from "../Controls/CreateTrip/CreateTripBtn";
+import { TripListProps } from '../../Types/Props';
+import CreateTripBtn from '../Controls/CreateTrip/CreateTripBtn';
 
 function TripList({setTripDisplay}: TripListProps) {
     return (

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import isUsernamePasswordValid from './FormValidation';
-import apiCalls from './../../Requests/apiCalls';
+import apiCalls from '../../Requests/apiCalls';
 
 function LoginForm() {
   const [ username, setUsername ] = useState("");
@@ -16,11 +16,11 @@ function LoginForm() {
     }
   }, [responseMessage])
 
-  function handleUsername(e) {
+  function handleUsername(e: React.ChangeEvent<HTMLInputElement>) {
     setUsername(e.target.value);
   }
 
-  function handlePassword(e) {
+  function handlePassword(e: React.ChangeEvent<HTMLInputElement>) {
     setPassword(e.target.value);
   }
 
@@ -30,7 +30,7 @@ function LoginForm() {
     setPassword("");
   };
 
-  async function handleLogin(e) {
+  async function handleLogin(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
     e.preventDefault();
     if (!isUsernamePasswordValid(username, password)) {
       return;
@@ -53,7 +53,7 @@ function LoginForm() {
     };
   };
 
-  async function handleSignUp(e) {
+  async function handleSignUp(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
     e.preventDefault();
     if (!isUsernamePasswordValid(username, password)) {
       return;
@@ -92,7 +92,7 @@ function LoginForm() {
         <label htmlFor="password">Password:</label>
         <input 
           type="password" 
-          username="password" 
+          password="password" 
           // pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,50}" 
           title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters" 
           onChange={handlePassword}

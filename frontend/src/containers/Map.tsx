@@ -6,7 +6,6 @@ import * as GeoSearch from 'leaflet-geosearch';
 import eventHandlers from '../EventHandlers/markerHandlers';
 import { MapProps } from '../Types/Props';
 
-
 function Map({ addMarker, setAddMarker }: MapProps) {
   const mapRef = useRef(null);
 
@@ -37,8 +36,14 @@ function Map({ addMarker, setAddMarker }: MapProps) {
     const map = mapRef.current;
     if (!map) return;
 
-    const markerHandler = (e) => {
-      eventHandlers.handleClickAddMarker(e, addMarker, setAddMarker, map, L);
+    const markerHandler = (e: L.LeafletMouseEvent) => {
+      eventHandlers.handleClickAddMarker({
+        e: e, 
+        addMarker: addMarker,
+        setAddMarker: setAddMarker,
+        map: map,
+        L: L,
+      });
     };
     
     map.on("click", markerHandler);

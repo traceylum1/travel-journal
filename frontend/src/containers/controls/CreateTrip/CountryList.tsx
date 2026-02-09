@@ -1,5 +1,5 @@
-import { CountryListProps } from "../../../Types/Props"
-import Trie from "./Trie";
+import { CountryListProps } from '../../../Types/Props';
+import Trie from './Trie';
 
 export default function CountryList({ trie, input, setInput }: CountryListProps) {
 

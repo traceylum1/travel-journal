@@ -1,5 +1,5 @@
-import AddMarkerBtn from "../Controls/AddMarkerBtn";
-import { TripProps } from "../../Types/Props";
+import AddMarkerBtn from '../Controls/AddMarkerBtn';
+import { TripProps } from '../../Types/Props';
 
 
 function Trip({tripDisplay, addMarker, setAddMarker}: TripProps) {

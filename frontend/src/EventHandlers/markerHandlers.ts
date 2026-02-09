@@ -1,7 +1,8 @@
 import apiCalls from "../Requests/apiCalls";
+import { HandleClickAddMarkerProps, HandleClickSaveMarkerProps } from "../Types/Props";
 
 const eventHandlers = {
-    handleClickAddMarker: function(e, addMarker, setAddMarker, map, L) {
+    handleClickAddMarker: function({e, addMarker, setAddMarker, map, L}: HandleClickAddMarkerProps)  {
         if (!addMarker) return;
 
         const marker = L.marker([e.latlng.lat, e.latlng.lng]).addTo(map);
@@ -43,7 +44,7 @@ const eventHandlers = {
         // Attach event listeners AFTER popup is added to the DOM
         popupContent
             .querySelector("#save-marker-btn")
-            .addEventListener("click", async () => this.handleClickSaveMarker(popupContent, e.latlng.lat, e.latlng.lng));
+            .addEventListener("click", async () => this.handleClickSaveMarker({popupContent, markerLat: e.latlng.lat, markerLng: e.latlng.lng}));
 
         popupContent
             .querySelector("#cancel-marker-btn")
@@ -52,7 +53,7 @@ const eventHandlers = {
         });
     },
 
-    handleClickSaveMarker: async (popupContent, markerLat, markerLng) => {
+    handleClickSaveMarker: async ({popupContent, markerLat, markerLng}: HandleClickSaveMarkerProps ) => {
         const username = "Marcus";
         const tripId = "1";
 
