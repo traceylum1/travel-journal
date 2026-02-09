@@ -1,6 +1,8 @@
+import { AddMarkerProps, LoginRegisterProps } from "../Types/Props";
+
 
 const apiCalls = {
-    login: async function ({ username, password }) {
+    login: async function ({ username, password }: LoginRegisterProps) {
         try {
             const response = await fetch("api/auth/login", {
                 method: "POST",
@@ -41,7 +43,7 @@ const apiCalls = {
         }
     },
 
-    register: async function ({ username, password }) {
+    register: async function ({ username, password }: LoginRegisterProps) {
         try {
             const response = await fetch("api/auth/register", {
                 method: "POST",
@@ -109,7 +111,7 @@ const apiCalls = {
     //     }
     // },
     
-    addMarker: async function ({ tripId, markerLocation, markerDescription, markerDate, markerLat, markerLng, username }) {
+    addMarker: async function ({ tripId, markerLocation, markerDescription, markerDate, markerLat, markerLng, username }: AddMarkerProps) {
         try {
             const response = await fetch("/api/protected/addMarker", {
                 method: "POST",
