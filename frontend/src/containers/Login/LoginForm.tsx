@@ -45,7 +45,7 @@ function LoginForm() {
         alert(response.message);
       } else {
         setResponseMessage(response.message);
-        setTimeout(()=> window.location.reload(), 2500);
+        // setTimeout(()=> window.location.reload(), 2500);
       }
 
     } catch (error) {

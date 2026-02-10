@@ -6,6 +6,7 @@ import (
 	"encoding/base64"
 	"io"
 	"log"
+	"net/http"
 	
 	"github.com/gin-gonic/gin"
 )
@@ -99,30 +100,25 @@ func (m *Manager) save(session *Session) error {
 	return nil
 }
 
+func (m *Manager) Create(c *gin.Context) error {
+	log.Println("create session")
+	session := newSession()
 
-func (m *Manager) Create() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		// Start the session
-		session := newSession()
+	// Add essential headers
+	c.Header("Vary", "Cookie")
+	c.Header("Cache-Control", `no-cache="Set-Cookie"`)
+	m.save(session)
 
-		// Create a new response writer
-		sw := &sessionResponseWriter{
-			ResponseWriter: c.Writer,
-			sessionManager: m,
-			c:              c,
-		}
+	c.SetCookieData(&http.Cookie{
+		Name:     m.cookieName,
+		Value:    session.id,
+		HttpOnly: true,
+		Path:     "/",
+		SameSite: http.SameSiteLaxMode,
+		Expires:  time.Now().Add(m.idleExpiration),
+		Secure:   false,
+	})
+	log.Println("idleExpiration:", m.idleExpiration)
 
-		// Replace original response writer with custom response writer
-		c.Writer = sw
-
-		// Add essential headers
-		c.Header("Vary", "Cookie")
-		c.Header("Cache-Control", `no-cache="Set-Cookie"`)
-
-		// Save the session
-		m.save(session)
-
-		// Write the session cookie to the response if not already written
-		sw.writeCookieIfNecessary()
-	}
+	return nil;
 }

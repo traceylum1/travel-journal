@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import Map from './Map';
-import Controls from './Controls/Controls';
 import TripList from './Trips/TripList';
 import Trip from './Trips/Trip';
 import LoginPage from './Login/LoginPage';

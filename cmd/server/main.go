@@ -23,9 +23,9 @@ func main() {
 
     sessionManager := session.NewSessionManager(
         session.NewInMemorySessionStore(),
-        10,
-        10,
-        20,
+        1000000000000000,
+        1000000000000000,
+        1000000000000000,
         "session",
     )
     
