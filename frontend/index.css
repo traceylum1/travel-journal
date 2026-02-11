@@ -159,3 +159,9 @@ textarea {
     display: flex;
     justify-content: space-between;
 }
+
+dialog {
+    height: 60%;
+    width: 20%;
+    border-radius: 8px;
+}

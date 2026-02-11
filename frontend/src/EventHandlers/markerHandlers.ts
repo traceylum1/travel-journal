@@ -1,7 +1,7 @@
 import apiCalls from "../Requests/apiCalls";
 import { HandleClickAddMarkerProps, HandleClickSaveMarkerProps } from "../Types/Props";
 
-const eventHandlers = {
+const markerEventHandlers = {
     handleClickAddMarker: function({e, addMarker, setAddMarker, map, L}: HandleClickAddMarkerProps)  {
         if (!addMarker) return;
 
@@ -109,4 +109,4 @@ const eventHandlers = {
     }
 }
 
-export default eventHandlers;
+export default markerEventHandlers;

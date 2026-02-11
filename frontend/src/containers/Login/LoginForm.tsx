@@ -11,8 +11,6 @@ function LoginForm() {
   useEffect(() => {
     if (responseMessage !== "") {
       setDisableForm(true);
-      console.log("response message", responseMessage);
-
     }
   }, [responseMessage])
 

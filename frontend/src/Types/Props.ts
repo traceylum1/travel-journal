@@ -43,7 +43,7 @@ export interface HandleClickSaveMarkerProps {
     markerLng: number,
 }
 
-export interface LoginRegisterProps {
+export interface UserCredentialsProps {
     username: string,
     password: string,
 }
@@ -56,4 +56,11 @@ export interface AddMarkerProps {
     markerLat: number,
     markerLng: number,
     username: string,
+}
+
+export interface CreateTripProps {
+    tripName: string,
+    description: string,
+    startDate: string,
+    endDate: string,
 }

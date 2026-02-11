@@ -3,7 +3,7 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-geosearch/dist/geosearch.css';
 import * as GeoSearch from 'leaflet-geosearch';
-import eventHandlers from '../EventHandlers/markerHandlers';
+import markerHandlers from '../EventHandlers/markerHandlers';
 import { MapProps } from '../Types/Props';
 
 function Map({ addMarker, setAddMarker }: MapProps) {
@@ -37,7 +37,7 @@ function Map({ addMarker, setAddMarker }: MapProps) {
     if (!map) return;
 
     const markerHandler = (e: L.LeafletMouseEvent) => {
-      eventHandlers.handleClickAddMarker({
+      markerHandlers.handleClickAddMarker({
         e: e, 
         addMarker: addMarker,
         setAddMarker: setAddMarker,

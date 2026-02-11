@@ -33,8 +33,10 @@ func main() {
     userHandler := handlers.NewUserHandler(userRepo)
     markerRepo := repository.NewMarkerRepository(pool)
     markerHandler := handlers.NewMarkerHandler(markerRepo)
+    tripRepo := repository.NewTripRepository(pool)
+    tripHandler := handlers.NewTripHandler(tripRepo)
 
-    router := router.NewRouter(userHandler, markerHandler, sessionManager)
+    router := router.NewRouter(userHandler, markerHandler, tripHandler, sessionManager)
 
     server := &http.Server{
         Addr:    ":8080",

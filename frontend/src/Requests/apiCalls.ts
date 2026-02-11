@@ -1,8 +1,8 @@
-import { AddMarkerProps, LoginRegisterProps } from "../Types/Props";
+import { AddMarkerProps, UserCredentialsProps, CreateTripProps } from "../Types/Props";
 
 
 const apiCalls = {
-    login: async function ({ username, password }: LoginRegisterProps) {
+    login: async function ({ username, password }: UserCredentialsProps) {
         try {
             const response = await fetch("api/auth/login", {
                 method: "POST",
@@ -27,7 +27,11 @@ const apiCalls = {
             }
 
             // Successful login
+            const data = await response.json();
+
             localStorage.setItem("username", JSON.stringify(username));
+            localStorage.setItem("userId", JSON.stringify(data.user_id));
+
             return {
                 success: true,
                 message: "Successfully logged in!"
@@ -43,7 +47,7 @@ const apiCalls = {
         }
     },
 
-    register: async function ({ username, password }: LoginRegisterProps) {
+    register: async function ({ username, password }: UserCredentialsProps) {
         try {
             const response = await fetch("api/auth/register", {
                 method: "POST",
@@ -69,7 +73,11 @@ const apiCalls = {
             }
 
             // Successful register
+            const data = await response.json();
+
             localStorage.setItem("username", JSON.stringify(username));
+            localStorage.setItem("userId", JSON.stringify(data.user_id));
+
             return {
                 success: true,
                 message: "Successfully signed up!"
@@ -85,31 +93,33 @@ const apiCalls = {
     },
 
     // TODO: Make createTrip endpoint
-    // createTrip: async function ({ tripId, markerLocation, markerDescription, markerDate, markerLat, markerLng, username }) {
-    //     try {
-    //         const response = await fetch("/api/protected/createTrip", {
-    //             method: "POST",
-    //             body: JSON.stringify({ 
-    //                 location: markerLocation, 
-    //                 description: markerDescription, 
-    //                 dateStart: markerDate, 
-    //                 dateEnd: dateEnd
-    //                 latitude: Number(markerLat), 
-    //                 longitude: Number(markerLng), 
-    //                 created_by: username 
-    //             }),
-    //         });
-    //         console.log("response", response);
-    //         if (!response.ok) {
-    //             throw new Error(`Response status: ${response.status}`);
-    //         }
+    createTrip: async function ({ tripName, description, startDate, endDate }: CreateTripProps) {
+        const userId = localStorage.getItem("userId");
+        const username = localStorage.getItem("username");
 
-    //         const result = await response.json();
-    //         console.log(result);
-    //     } catch (error) {
-    //         console.error(error.message);
-    //     }
-    // },
+        try {
+            const response = await fetch("/api/protected/createTrip", {
+                method: "POST",
+                body: JSON.stringify({ 
+                    trip_name: tripName, 
+                    description: description, 
+                    start_date: startDate, 
+                    end_date: endDate,
+                    created_by: username,
+                    owner_id: userId
+                }),
+            });
+            console.log("response", response);
+            if (!response.ok) {
+                throw new Error(`Response status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            console.log(result);
+        } catch (error) {
+            console.error(error.message);
+        }
+    },
     
     addMarker: async function ({ tripId, markerLocation, markerDescription, markerDate, markerLat, markerLng, username }: AddMarkerProps) {
         try {

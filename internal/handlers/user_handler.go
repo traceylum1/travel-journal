@@ -114,7 +114,10 @@ func (h *UserHandler) UserLogin(sm *session.Manager) gin.HandlerFunc {
 			return
 		}
 		sm.Create(c)
-		c.JSON(http.StatusOK, gin.H{"status": "logged in"})
+		c.JSON(http.StatusOK, gin.H{
+			"status": "logged in",
+			"user_id": user.ID,
+		})
 	}
 }
 

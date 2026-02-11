@@ -10,7 +10,7 @@ import (
 )
 
 type TripHandler struct {
-	repo *repository.MarkerRepository
+	repo *repository.TripRepository
 }
 
 func NewTripHandler(repo *repository.TripRepository) *TripHandler {
@@ -18,7 +18,7 @@ func NewTripHandler(repo *repository.TripRepository) *TripHandler {
 }
 
 
-func (h *MarkerHandler) CreateTrip() gin.HandlerFunc {
+func (h *TripHandler) CreateTrip() gin.HandlerFunc {
 	return func (c *gin.Context) {
 		var input models.CreateTripInput
 
@@ -41,13 +41,13 @@ func (h *MarkerHandler) CreateTrip() gin.HandlerFunc {
 }
 
 
-func (h *UserHandler) GetUserTrips() gin.HandlerFunc {
+func (h *TripHandler) GetUserTrips() gin.HandlerFunc {
 	return func (c *gin.Context) {
 		username := c.Param("username")
 
-		trips, err := h.repo.GetTrips(c.Request.Context(), username)
+		trips, err := h.repo.GetUserTrips(c.Request.Context(), username)
 		if err != nil {
-			c.JSON(http.StatusNotFound, gin.H{"error": "user not found"})
+			c.JSON(http.StatusNotFound, gin.H{"error": "users trips not found"})
 			return
 		}
 

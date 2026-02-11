@@ -78,22 +78,3 @@ func (r *UserRepository) GetUserByUsername(
 
 	return user, nil
 }
-
-
-func (r *UserRepository) GetTrips(
-	ctx context.Context, 
-	username string,
-) (*[]string, error) {
-	var trips []string
-	err := r.db.QueryRow(
-		ctx,
-		`SELECT trips FROM users WHERE username=$1`,
-		username,
-	).Scan(&trips)
-
-	if err != nil {
-		return nil, fmt.Errorf("get trips: %w", ErrInternal)
-	}
-
-	return &trips, nil
-}
