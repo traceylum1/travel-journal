@@ -9,7 +9,6 @@ import (
 // CreateTripInput represents the user input data sent to the backend to create the marker
 type CreateTripInput struct {
     TripName    string              `json:"trip_name" db:"trip_name"`
-    TripMarkers []int               `json:"trip_markers"`
 	StartDate   utility.DateOnly	`json:"start_date" db:"start_date"`
     EndDate     utility.DateOnly    `json:"end_date" db:"end_date"`
     Description string              `json:"description" db:"description"`

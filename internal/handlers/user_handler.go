@@ -119,16 +119,3 @@ func (h *UserHandler) UserLogin(sm *session.Manager) gin.HandlerFunc {
 }
 
 
-func (h *UserHandler) GetUserTrips() gin.HandlerFunc {
-	return func (c *gin.Context) {
-		username := c.Param("username")
-
-		trips, err := h.repo.GetTrips(c.Request.Context(), username)
-		if err != nil {
-			c.JSON(http.StatusNotFound, gin.H{"error": "user not found"})
-			return
-		}
-
-		c.JSON(http.StatusOK, trips)
-	}
-}
