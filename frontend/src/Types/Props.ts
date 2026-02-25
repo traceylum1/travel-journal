@@ -38,9 +38,11 @@ export interface HandleClickAddMarkerProps {
 }
 
 export interface HandleClickSaveMarkerProps {
-    popupContent: HTMLDivElement,
     markerLat: number,
     markerLng: number,
+    markerDate: string,
+    markerLocation: string,
+    markerDescription: string,
 }
 
 export interface UserCredentialsProps {
