@@ -1,17 +1,35 @@
 import { LatLng } from 'leaflet-geosearch/dist/providers/provider.js';
-import Trie from '../containers/controls/CreateTrip/Trie';
+import Trie from '../Containers/Controls/CreateTrip/Trie';
 
 export interface MapProps {
     addMarker: boolean,
     setAddMarker: React.Dispatch<React.SetStateAction<boolean>>,
+    tripID: number | null,
 }
 
 export interface TripListProps {
-    setTripDisplay: React.Dispatch<React.SetStateAction<string>>
+    setTripDisplay: React.Dispatch<React.SetStateAction<TripListItem | null>>,
+    tripList: TripListItem[],
+    setTripList: React.Dispatch<React.SetStateAction<TripListItem[]>>
+}
+
+export interface TripListItem {
+    trip_id: number,
+    trip_name: string,
+    description: string,
+    start_date: string,
+    end_date: string,
+    created_by: string,
+    owner_id: number,
+}
+
+export interface CreateTripBtnProps {
+    setTripList: React.Dispatch<React.SetStateAction<TripListItem[]>>,
+    setTripDisplay: React.Dispatch<React.SetStateAction<TripListItem | null>>,
 }
 
 export interface TripProps {
-    tripDisplay: string,
+    tripDisplay: TripListItem,
     addMarker: boolean,
     setAddMarker: React.Dispatch<React.SetStateAction<boolean>>
 }

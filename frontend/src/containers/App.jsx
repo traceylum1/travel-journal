@@ -7,8 +7,9 @@ import { useLocalStorageState } from '../CustomHooks/customHooks';
 
 function App() {
   const [ addMarker, setAddMarker ] = useState(false);
-  const [ tripDisplay, setTripDisplay ] = useState("");
+  const [ tripDisplay, setTripDisplay ] = useState(null);
   const [ username, setUsername ] = useLocalStorageState("username", null)
+  const [ tripList, setTripList ] = useLocalStorageState("tripList", [])
 
   const mainContainer = 
     <div className="flex h-full w-full flex-col gap-3 p-3 md:flex-row">
@@ -20,6 +21,8 @@ function App() {
         /> */}
         <TripList
           setTripDisplay={setTripDisplay}
+          tripList={tripList}
+          setTripList={setTripList}
         />
         { tripDisplay ?
           <Trip
@@ -33,7 +36,7 @@ function App() {
         <Map
           addMarker={addMarker}
           setAddMarker={setAddMarker}
-          tripID={tripDisplay}
+          tripID={tripDisplay ? tripDisplay.trip_id : null}
         />
       </div>
     </div>

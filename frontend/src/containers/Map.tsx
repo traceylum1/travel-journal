@@ -6,7 +6,7 @@ import * as GeoSearch from 'leaflet-geosearch';
 import markerHandlers from '../EventHandlers/markerHandlers';
 import { MapProps } from '../Types/Props';
 
-function Map({ addMarker, setAddMarker }: MapProps) {
+function Map({ addMarker, setAddMarker, tripID}: MapProps) {
   const mapRef = useRef(null);
 
   useEffect(() => {

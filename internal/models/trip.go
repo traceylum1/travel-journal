@@ -12,7 +12,8 @@ type CreateTripInput struct {
 	StartDate   utility.DateOnly	`json:"start_date" db:"start_date"`
     EndDate     utility.DateOnly    `json:"end_date" db:"end_date"`
     Description string              `json:"description" db:"description"`
-    CreatedBy   int                 `json:"created_by" db:"created_by"`
+    CreatedBy   string              `json:"created_by" db:"created_by"`
+    OwnerID     int                 `json:"owner_id" db:"owner_id"`
 }
 
 // Trip represents the stored data about a trip that was created
@@ -23,7 +24,8 @@ type Trip struct {
 	StartDate   utility.DateOnly	`json:"start_date" db:"start_date"`
     EndDate     utility.DateOnly    `json:"end_date" db:"end_date"`
     Description string              `json:"description" db:"description"`
-    CreatedBy   int                 `json:"created_by" db:"created_by"`
+    CreatedBy   string              `json:"created_by" db:"created_by"`
+    OwnerID     int                 `json:"owner_id" db:"owner_id"`
 }
 
 type TripMembership struct {

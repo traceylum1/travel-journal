@@ -17,23 +17,27 @@ func NewTripRepository(db *pgxpool.Pool) *TripRepository {
 	return &TripRepository{db: db}
 }
 
-func (r *TripRepository) CreateTrip(ctx context.Context, t *models.CreateTripInput) error {
-	_, err := r.db.Exec(
-        context.Background(), 
+func (r *TripRepository) CreateTrip(ctx context.Context, t *models.CreateTripInput) (int, error) {
+	var tripID int
+
+	err := r.db.QueryRow(
+        ctx,
         `INSERT INTO trips (
 			trip_name, 
 			start_date,
 			end_date,
 			description,
-			created_by)
-        VALUES ($1, $2, $3, $4, $5)`,
-    	t.TripName, t.StartDate, t.EndDate, t.Description, t.CreatedBy,
-        )
+			created_by,
+			owner_id)
+        VALUES ($1, $2, $3, $4, $5, $6)
+		RETURNING trip_id`,
+    	t.TripName, t.StartDate, t.EndDate, t.Description, t.CreatedBy, t.OwnerID,
+        ).Scan(&tripID)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "create trip failed: %v\n", err)
-		return err
+		return 0, err
 	}
-	return nil
+	return tripID, nil
 }
 
 func (r *TripRepository) GetUserTrips(ctx context.Context, userID string) (*[]int, error) {

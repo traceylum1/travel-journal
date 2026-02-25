@@ -30,13 +30,16 @@ func (h *TripHandler) CreateTrip() gin.HandlerFunc {
 
 		log.Printf("parsed input: %+v", input)
 
-		if err := h.repo.CreateTrip(c.Request.Context(), &input); err != nil {
+		tripID, err := h.repo.CreateTrip(c.Request.Context(), &input)
+		if err != nil {
 			log.Printf("db error: %v", err)
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "db error"})
 			return
 		}
 		
-		c.JSON(http.StatusCreated, input)
+		c.JSON(http.StatusCreated, gin.H{
+			"trip_id": tripID,
+		})
 	}
 }
 

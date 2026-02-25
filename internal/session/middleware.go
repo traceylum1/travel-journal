@@ -19,6 +19,8 @@ func Required(m *Manager) gin.HandlerFunc {
 			if err != nil {
 				log.Printf("Failed to read session from store: %v", err)
 				c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to read session from store"})
+				c.Abort()
+				return
 			}
 		}
 
@@ -37,6 +39,8 @@ func Required(m *Manager) gin.HandlerFunc {
 				// Partitioned: true, // Go 1.22+
 			})
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "missing or invalid session"})
+			c.Abort()
+			return
 		}
 
 		// Attach session to context

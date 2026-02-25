@@ -92,32 +92,50 @@ const apiCalls = {
         }
     },
 
-    // TODO: Make createTrip endpoint
     createTrip: async function ({ tripName, description, startDate, endDate }: CreateTripProps) {
-        const userId = localStorage.getItem("userId");
-        const username = localStorage.getItem("username");
+        const usernameValue = localStorage.getItem("username");
+        const username = usernameValue ? JSON.parse(usernameValue) : null;
+        const userIdValue = localStorage.getItem("userId");
+        const ownerId = userIdValue ? Number(JSON.parse(userIdValue)) : NaN;
+
+        if (!username || Number.isNaN(ownerId)) {
+            return {
+                success: false,
+                message: "Missing user session. Please log in again.",
+            };
+        }
 
         try {
             const response = await fetch("/api/protected/createTrip", {
                 method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
                 body: JSON.stringify({ 
                     trip_name: tripName, 
                     description: description, 
                     start_date: startDate, 
                     end_date: endDate,
                     created_by: username,
-                    owner_id: userId
+                    owner_id: ownerId,
                 }),
             });
-            console.log("response", response);
+
             if (!response.ok) {
                 throw new Error(`Response status: ${response.status}`);
             }
 
             const result = await response.json();
-            console.log(result);
+            return {
+                success: true,
+                tripId: result.trip_id,
+            };
         } catch (error) {
-            console.error(error.message);
+            console.error(error instanceof Error ? error.message : "Unknown error");
+            return {
+                success: false,
+                message: "Unable to create trip right now.",
+            };
         }
     },
     
