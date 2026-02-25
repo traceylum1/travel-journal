@@ -1,5 +1,5 @@
 import apiCalls from "../Requests/apiCalls";
-import { HandleClickAddMarkerProps, HandleClickSaveMarkerProps } from "../Types/Props";
+import { HandleClickAddMarkerProps, HandleClickSaveMarkerProps, MarkerSaveResult } from "../Types/Props";
 import { createElement } from "react";
 import { createRoot } from "react-dom/client";
 import MarkerPopupContent, { type MarkerFormData } from "../containers/controls/MarkerPopupContent";
@@ -18,15 +18,15 @@ const markerEventHandlers = {
         setAddMarker(prev => !prev);
 
         const root = createRoot(popupContent);
-        const onSave = async (data: MarkerFormData) => {
-            const saveSuccess = await this.handleClickSaveMarker({
+        const onSave = async (data: MarkerFormData, markerId: number | null): Promise<MarkerSaveResult> => {
+            return this.handleClickSaveMarker({
+                markerId: markerId ?? undefined,
                 markerLat: e.latlng.lat,
                 markerLng: e.latlng.lng,
                 markerDate: data.markerDate,
                 markerLocation: data.markerLocation,
                 markerDescription: data.markerDescription,
             });
-            return saveSuccess;
         };
 
         root.render(
@@ -34,7 +34,18 @@ const markerEventHandlers = {
                 defaultDate: formattedDateUtc,
                 onSave: onSave,
                 onCancel: () => map.removeLayer(marker),
-                onDelete: () => map.removeLayer(marker),
+                onDelete: async (markerId: number | null) => {
+                    if (markerId === null) {
+                        map.removeLayer(marker);
+                        return true;
+                    }
+
+                    const success = await apiCalls.deleteMarker({ markerId });
+                    if (success) {
+                        map.removeLayer(marker);
+                    }
+                    return success;
+                },
             })
         );
 
@@ -44,6 +55,7 @@ const markerEventHandlers = {
     },
 
     handleClickSaveMarker: async ({
+        markerId,
         markerLat,
         markerLng,
         markerDate,
@@ -52,23 +64,25 @@ const markerEventHandlers = {
     }: HandleClickSaveMarkerProps ) => {
         const username = "Marcus";
         const tripId = 1;
-        
-        try {
-            await apiCalls.addMarker({ 
-                tripId: tripId, 
-                markerLocation: markerLocation, 
-                markerDescription: markerDescription, 
-                markerDate: markerDate, 
-                markerLat: markerLat, 
-                markerLng: markerLng, 
-                username: username
+
+        if (typeof markerId === "number") {
+            return apiCalls.updateMarker({
+                markerId,
+                markerLocation,
+                markerDescription,
+                markerDate,
             });
-            return true;
-        } catch {
-            console.error("failed to save marker");
-            return false;
         }
 
+        return apiCalls.addMarker({
+            tripId: tripId,
+            markerLocation: markerLocation,
+            markerDescription: markerDescription,
+            markerDate: markerDate,
+            markerLat: markerLat,
+            markerLng: markerLng,
+            username: username
+        });
     },
 
     handleClickEditMarker: async function() {

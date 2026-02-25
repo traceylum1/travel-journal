@@ -7,11 +7,11 @@ import (
 )
 
 func NewRouter(
-		userHandler *handlers.UserHandler, 
-		markerHandler *handlers.MarkerHandler, 
-		tripHandler * handlers.TripHandler, 
-		sm *session.Manager,
-	) *gin.Engine {
+	userHandler *handlers.UserHandler,
+	markerHandler *handlers.MarkerHandler,
+	tripHandler *handlers.TripHandler,
+	sm *session.Manager,
+) *gin.Engine {
 
 	r := gin.Default()
 
@@ -22,6 +22,8 @@ func NewRouter(
 	protected := r.Group("/api/protected")
 	protected.Use(session.Required(sm))
 	protected.POST("addMarker", markerHandler.CreateMarker())
+	protected.PUT("marker/:markerID", markerHandler.UpdateMarker())
+	protected.DELETE("marker/:markerID", markerHandler.DeleteMarker())
 	protected.POST("createTrip", tripHandler.CreateTrip())
 	// protected.GET("user/:username", userHandler.GetUserTrips())
 

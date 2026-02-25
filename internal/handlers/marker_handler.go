@@ -1,10 +1,13 @@
 package handlers
 
 import (
-	"net/http"
+	"errors"
 	"log"
+	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/jackc/pgx/v5"
 	"github.com/traceylum1/travel-journal/internal/models"
 	"github.com/traceylum1/travel-journal/internal/repository"
 )
@@ -18,7 +21,7 @@ func NewMarkerHandler(repo *repository.MarkerRepository) *MarkerHandler {
 }
 
 func (h *MarkerHandler) CreateMarker() gin.HandlerFunc {
-	return func (c *gin.Context) {
+	return func(c *gin.Context) {
 		var input models.CreateMarkerInput
 
 		if err := c.ShouldBindJSON(&input); err != nil {
@@ -29,19 +32,70 @@ func (h *MarkerHandler) CreateMarker() gin.HandlerFunc {
 
 		log.Printf("parsed input: %+v", input)
 
-		if err := h.repo.CreateMarker(c.Request.Context(), &input); err != nil {
+		markerID, err := h.repo.CreateMarker(c.Request.Context(), &input)
+		if err != nil {
 			log.Printf("db error: %v", err)
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "db error"})
 			return
 		}
-		
-		c.JSON(http.StatusCreated, input)
+
+		c.JSON(http.StatusCreated, gin.H{
+			"marker_id": markerID,
+		})
 	}
 }
 
+func (h *MarkerHandler) UpdateMarker() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		markerID, err := strconv.Atoi(c.Param("markerID"))
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "invalid marker id"})
+			return
+		}
+
+		var input models.UpdateMarkerInput
+		if err := c.ShouldBindJSON(&input); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+		input.ID = markerID
+
+		if err := h.repo.UpdateMarker(c.Request.Context(), &input); err != nil {
+			if errors.Is(err, pgx.ErrNoRows) {
+				c.JSON(http.StatusNotFound, gin.H{"error": "marker not found"})
+				return
+			}
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "db error"})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{"status": "updated"})
+	}
+}
+
+func (h *MarkerHandler) DeleteMarker() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		markerID, err := strconv.Atoi(c.Param("markerID"))
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "invalid marker id"})
+			return
+		}
+
+		if err := h.repo.DeleteMarker(c.Request.Context(), markerID); err != nil {
+			if errors.Is(err, pgx.ErrNoRows) {
+				c.JSON(http.StatusNotFound, gin.H{"error": "marker not found"})
+				return
+			}
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "db error"})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{"status": "deleted"})
+	}
+}
 
 func (h *MarkerHandler) GetMarkersByTrip() gin.HandlerFunc {
-	return func (c *gin.Context) {
+	return func(c *gin.Context) {
 		userName := c.Param("username")
 
 		trips, err := h.repo.GetUserTrips(c.Request.Context(), userName)

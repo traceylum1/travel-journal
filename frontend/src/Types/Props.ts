@@ -38,6 +38,7 @@ export interface HandleClickAddMarkerProps {
 }
 
 export interface HandleClickSaveMarkerProps {
+    markerId?: number,
     markerLat: number,
     markerLng: number,
     markerDate: string,
@@ -58,6 +59,22 @@ export interface AddMarkerProps {
     markerLat: number,
     markerLng: number,
     username: string,
+}
+
+export interface UpdateMarkerProps {
+    markerId: number,
+    markerLocation: string,
+    markerDescription: string,
+    markerDate: string,
+}
+
+export interface DeleteMarkerProps {
+    markerId: number,
+}
+
+export interface MarkerSaveResult {
+    success: boolean,
+    markerId?: number,
 }
 
 export interface CreateTripProps {

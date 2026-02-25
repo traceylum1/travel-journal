@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from "react";
+import { MarkerSaveResult } from "../../Types/Props";
 
 type MarkerFormData = {
   markerDate: string;
@@ -8,15 +9,17 @@ type MarkerFormData = {
 
 interface MarkerPopupContentProps {
   defaultDate: string;
-  onSave: (data: MarkerFormData) => Promise<boolean>;
+  onSave: (data: MarkerFormData, markerId: number | null) => Promise<MarkerSaveResult>;
   onCancel: () => void;
-  onDelete: () => void;
+  onDelete: (markerId: number | null) => Promise<boolean>;
 }
 
 function MarkerPopupContent({ defaultDate, onSave, onCancel, onDelete }: MarkerPopupContentProps) {
   const [mode, setMode] = useState<"edit" | "saved">("edit");
   const [isSaving, setIsSaving] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [markerId, setMarkerId] = useState<number | null>(null);
   const [formData, setFormData] = useState<MarkerFormData>({
     markerDate: defaultDate,
     markerLocation: "",
@@ -31,15 +34,29 @@ function MarkerPopupContent({ defaultDate, onSave, onCancel, onDelete }: MarkerP
     e.preventDefault();
     setIsSaving(true);
     setErrorMessage("");
-    const success = await onSave(formData);
+    const saveResult = await onSave(formData, markerId);
     setIsSaving(false);
 
-    if (success) {
+    if (saveResult.success) {
+      if (typeof saveResult.markerId === "number") {
+        setMarkerId(saveResult.markerId);
+      }
       setMode("saved");
       return;
     }
 
     setErrorMessage("Failed to save marker. Please try again.");
+  }
+
+  async function handleDelete() {
+    setErrorMessage("");
+    setIsDeleting(true);
+    const deleted = await onDelete(markerId);
+    setIsDeleting(false);
+
+    if (!deleted) {
+      setErrorMessage("Failed to delete marker. Please try again.");
+    }
   }
 
   if (mode === "saved") {
@@ -75,11 +92,13 @@ function MarkerPopupContent({ defaultDate, onSave, onCancel, onDelete }: MarkerP
           <button
             type="button"
             className="control-button flex-1 border-red-300 text-red-700 hover:bg-red-50"
-            onClick={onDelete}
+            onClick={handleDelete}
+            disabled={isDeleting}
           >
-            Delete
+            {isDeleting ? "Deleting..." : "Delete"}
           </button>
         </div>
+        {errorMessage ? <p className="m-0 text-xs text-red-600">{errorMessage}</p> : null}
       </div>
     );
   }

@@ -1,4 +1,4 @@
-import { AddMarkerProps, UserCredentialsProps, CreateTripProps } from "../Types/Props";
+import { AddMarkerProps, UserCredentialsProps, CreateTripProps, UpdateMarkerProps, DeleteMarkerProps, MarkerSaveResult } from "../Types/Props";
 
 
 const apiCalls = {
@@ -125,6 +125,9 @@ const apiCalls = {
         try {
             const response = await fetch("/api/protected/addMarker", {
                 method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
                 body: JSON.stringify({ 
                     trip_id: Number(tripId), 
                     location: markerLocation, 
@@ -141,10 +144,63 @@ const apiCalls = {
             if (!response.ok) {
                 throw new Error(data.error || "Unknown server error");
             }
-            
-            console.log(data);
+
+            return {
+                success: true,
+                markerId: data.marker_id,
+            } as MarkerSaveResult;
         } catch (error) {
-            console.error(error.message);
+            console.error(error instanceof Error ? error.message : "Unknown error");
+            return {
+                success: false,
+            } as MarkerSaveResult;
+        }
+    },
+
+    updateMarker: async function ({ markerId, markerLocation, markerDescription, markerDate }: UpdateMarkerProps) {
+        try {
+            const response = await fetch(`/api/protected/marker/${markerId}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    location: markerLocation,
+                    description: markerDescription,
+                    date: markerDate,
+                }),
+            });
+
+            if (!response.ok) {
+                const data = await response.json();
+                throw new Error(data.error || "Unknown server error");
+            }
+
+            return {
+                success: true,
+                markerId: markerId,
+            } as MarkerSaveResult;
+        } catch (error) {
+            console.error(error instanceof Error ? error.message : "Unknown error");
+            return {
+                success: false,
+            } as MarkerSaveResult;
+        }
+    },
+
+    deleteMarker: async function ({ markerId }: DeleteMarkerProps) {
+        try {
+            const response = await fetch(`/api/protected/marker/${markerId}`, {
+                method: "DELETE",
+            });
+            if (!response.ok) {
+                const data = await response.json();
+                throw new Error(data.error || "Unknown server error");
+            }
+            return true;
+        } catch (error) {
+            console.error(error instanceof Error ? error.message : "Unknown error");
+            return false;
         }
     },
 }
