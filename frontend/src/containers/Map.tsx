@@ -53,7 +53,7 @@ function Map({ addMarker, setAddMarker }: MapProps) {
   }, [addMarker]); // <-- update listeners only when needed
   
 
-  return <div id='map'></div>
+  return <div id='map' className="h-full w-full"></div>
 }
 
 export default Map

@@ -76,30 +76,30 @@ function LoginForm() {
   };
 
   return (
-    <form className="login-form" id="login-form" action="/login" method="POST">
+    <form className="mt-6" id="login-form" action="/login" method="POST">
       <fieldset disabled={disableForm}>
-        <label htmlFor="username">Username:</label>
+        <label htmlFor="username" className="mb-1 block text-sm font-medium text-zinc-200">Username</label>
         <input 
-          username="username" 
-          // minLength="5" 
-          // maxLength="15" 
+          id="username"
+          name="username"
+          className="mb-3 w-full rounded-md border border-zinc-500 bg-zinc-900 px-3 py-2 text-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/70 disabled:cursor-not-allowed disabled:opacity-70"
           title="Must contain 5 to 15 characters"
           onChange={handleUsername}
           required />
-        <br/>
-        <label htmlFor="password">Password:</label>
+        <label htmlFor="password" className="mb-1 block text-sm font-medium text-zinc-200">Password</label>
         <input 
+          id="password"
+          name="password"
           type="password" 
-          password="password" 
-          // pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,50}" 
+          className="mb-3 w-full rounded-md border border-zinc-500 bg-zinc-900 px-3 py-2 text-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/70 disabled:cursor-not-allowed disabled:opacity-70"
           title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters" 
           onChange={handlePassword}
           required/>
-        <div className="login-buttons">
-          <button onClick={handleLogin}>Log in</button>
-          <button onClick={handleSignUp}>Sign up</button>
+        <div className="mt-5 flex justify-between gap-3">
+          <button className="control-button flex-1" onClick={handleLogin}>Log in</button>
+          <button className="control-button flex-1" onClick={handleSignUp}>Sign up</button>
         </div>
-        <p><i>{responseMessage}</i></p>
+        <p className="mt-4 min-h-5 text-sm italic text-emerald-300">{responseMessage}</p>
       </fieldset>
     </form>
   );

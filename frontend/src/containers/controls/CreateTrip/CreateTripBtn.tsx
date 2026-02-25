@@ -24,48 +24,43 @@ function CreateTripBtn() {
     const formattedDateUtc = nowUtc.toISOString().split('T')[0];
 
     const dialogueContent = 
-        <form>
-            Trip Name:
-            <br/>
-            <textarea id="trip-description" name="description" rows="2" cols="35"></textarea>
-            <br/>
+        <form className="space-y-4">
+            <div className="space-y-1">
+                <label htmlFor="trip-name" className="text-sm font-medium text-zinc-700">Trip name</label>
+                <textarea id="trip-name" name="tripName" rows={2} className="w-full resize-y rounded-md border border-zinc-300 px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/70"></textarea>
+            </div>
 
-            Country:
-            <br/>
-            <input className="country-name" onInput={handleInput} />
-            <CountryList trie={trie} input={input} setInput={setInput} />
-            <br/>
+            <div className="relative space-y-1">
+                <label htmlFor="country-name" className="text-sm font-medium text-zinc-700">Country</label>
+                <input id="country-name" className="country-name w-full rounded-md border border-zinc-300 px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/70" onInput={handleInput} />
+                <CountryList trie={trie} input={input} setInput={setInput} />
+            </div>
 
-            <span>
-                <label>Start Date:</label>
-                <br/>
-                <input id="trip-start" type="date" defaultValue={formattedDateUtc} />
-                <br/>
-                <br/>
+            <div className="grid gap-3 sm:grid-cols-2">
+                <div className="space-y-1">
+                    <label htmlFor="trip-start" className="text-sm font-medium text-zinc-700">Start date</label>
+                    <input id="trip-start" type="date" defaultValue={formattedDateUtc} className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/70" />
+                </div>
 
-                <label>End Date:</label>
-                <br/>
-                <input id="trip-end" type="date" defaultValue={formattedDateUtc} />
-                <br/>
-            </span>
+                <div className="space-y-1">
+                    <label htmlFor="trip-end" className="text-sm font-medium text-zinc-700">End date</label>
+                    <input id="trip-end" type="date" defaultValue={formattedDateUtc} className="w-full rounded-md border border-zinc-300 px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/70" />
+                </div>
+            </div>
 
-            <br/>
-
-            Description:
-            <br/>
-            <textarea id="trip-description" name="description" rows="5" cols="35"></textarea>
-            <br/>
-
-
+            <div className="space-y-1">
+                <label htmlFor="trip-description" className="text-sm font-medium text-zinc-700">Description</label>
+                <textarea id="trip-description" name="description" rows={5} className="w-full resize-y rounded-md border border-zinc-300 px-3 py-2 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/70"></textarea>
+            </div>
         </form>
 
 
     return (
-        <div>
-            <button className="control-button" 
+        <div className="w-28">
+            <button className="control-button w-full" 
                 onClick={() => setIsDialogOpen(true)}
             >
-                create trip
+                Create trip
             </button>
 
             <DialogueBox

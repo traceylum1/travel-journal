@@ -1,5 +1,5 @@
 import { LatLng } from 'leaflet-geosearch/dist/providers/provider.js';
-import Trie from '../Containers/Controls/CreateTrip/Trie';
+import Trie from '../containers/controls/CreateTrip/Trie';
 
 export interface MapProps {
     addMarker: boolean,
