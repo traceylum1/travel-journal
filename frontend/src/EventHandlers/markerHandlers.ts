@@ -54,6 +54,7 @@ const markerEventHandlers = {
         });
     },
 
+    // TODO: Pass in appropriate tripID and get username from local storage
     handleClickSaveMarker: async ({
         markerId,
         markerLat,
