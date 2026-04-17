@@ -9,12 +9,7 @@ import (
 )
 
 func NewPostgresPool(ctx context.Context) (*pgxpool.Pool, error) {
-	databaseURL := os.Getenv("DATABASE_URL")
-	if databaseURL == "" {
-		databaseURL = "postgres://tracey@localhost:5432/traveljournal?sslmode=disable"
-	}
-
-	config, err := pgxpool.ParseConfig(databaseURL)
+	config, err := pgxpool.ParseConfig(os.Getenv("DATABASE_URL"))
 	if err != nil {
 		return nil, err
 	}
