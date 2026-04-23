@@ -22,6 +22,28 @@ Set `DATABASE_URL` before running `go run ./cmd/server`:
 export DATABASE_URL="postgres://travel_journal:travel_journal@localhost:5433/travel_journal_e2e?sslmode=disable"
 ```
 
+## Apply schema + optional wipe before suite
+
+Run the DB prep command before Playwright (or any E2E suite):
+
+```sh
+go run ./cmd/e2e-db-prep
+```
+
+This command always applies schema idempotently, and can optionally wipe data:
+
+- `E2E_WIPE_STRATEGY=truncate`: clears `users`, `trips`, and `markers` with `TRUNCATE ... RESTART IDENTITY CASCADE`.
+- `E2E_WIPE_STRATEGY=prefix`: deletes only users whose usernames start with `E2E_USER_PREFIX` (defaults to `e2e_`), allowing parallel/local data to coexist.
+- unset `E2E_WIPE_STRATEGY` (or `none`): no wipe, schema apply only.
+
+Example with prefix wipe:
+
+```sh
+export E2E_WIPE_STRATEGY=prefix
+export E2E_USER_PREFIX=e2e_
+go run ./cmd/e2e-db-prep
+```
+
 Then start the API:
 
 ```sh
