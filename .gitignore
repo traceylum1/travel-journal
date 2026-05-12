@@ -48,3 +48,8 @@ go.work.sum
 
 # env file
 .env
+
+# Playwright (frontend E2E)
+frontend/playwright-report/
+frontend/test-results/
+frontend/blob-report/
