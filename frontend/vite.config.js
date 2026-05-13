@@ -2,13 +2,18 @@ import { defineConfig } from 'vitest/config'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 
+const apiProxyTarget =
+  process.env.API_PROXY_TARGET ||
+  process.env.VITE_API_PROXY_TARGET ||
+  'http://localhost:8080'
+
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   server: {
     proxy: {
       "/api": {
-        target: "http://localhost:8080",
+        target: apiProxyTarget,
         changeOrigin: true,
         secure: false,
       },
@@ -19,7 +24,7 @@ export default defineConfig({
     strictPort: true,
     proxy: {
       "/api": {
-        target: "http://localhost:8080",
+        target: apiProxyTarget,
         changeOrigin: true,
         secure: false,
       },
