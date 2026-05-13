@@ -18,6 +18,7 @@ func NewRouter(
 	auth := r.Group("/api/auth")
 	auth.POST("register", userHandler.CreateUser(sm))
 	auth.POST("login", userHandler.UserLogin(sm))
+	auth.POST("logout", userHandler.Logout(sm))
 
 	protected := r.Group("/api/protected")
 	protected.Use(session.Required(sm))

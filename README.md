@@ -39,6 +39,22 @@ Postgres is exposed on the host at port **5434** (container port 5432) so it doe
 
 [`docker-compose.e2e.yml`](docker-compose.e2e.yml) is only for Playwright/E2E Postgres; it uses a different database and port than this dev stack.
 
+## Seed dev users
+
+To insert a couple of fixed test accounts (idempotent: safe to run more than once), set `DATABASE_URL` on the host and run:
+
+```sh
+export DATABASE_URL='postgres://travel_journal:travel_journal@localhost:5434/travel_journal_dev?sslmode=disable'
+go run ./cmd/seed
+```
+
+This applies the schema if needed, then inserts any missing seed users. Usernames and passwords are defined in [`internal/db/seed.go`](internal/db/seed.go) (`DevSeedUsers`). Defaults:
+
+| Username | Password   |
+|----------|------------|
+| `test1`  | `Test1!ab` |
+| `test2`  | `Test2!cd` |
+
 ## Scripts (frontend)
 
 Run these from `frontend/` on your machine (tests and tooling are not wired into the Compose dev services):
@@ -70,7 +86,8 @@ Quick outline:
 |------|------|
 | `cmd/server` | HTTP API entrypoint |
 | `cmd/e2e-db-prep` | Apply schema + optional E2E DB reset |
-| `internal/db` | Postgres pool and schema |
+| `cmd/seed` | Apply schema + insert dev seed users |
+| `internal/db` | Postgres pool, schema, and dev seed helpers |
 | `internal/handlers`, `internal/repository`, `internal/models` | HTTP layer and data access |
 | `internal/router` | Route registration |
 | `internal/session` | Session middleware and store |

@@ -47,6 +47,18 @@ const apiCalls = {
         }
     },
 
+    logout: async function () {
+        try {
+            const response = await fetch("api/auth/logout", {
+                method: "POST",
+                credentials: "same-origin",
+            });
+            return { success: response.ok };
+        } catch {
+            return { success: false };
+        }
+    },
+
     register: async function ({ username, password }: UserCredentialsProps) {
         try {
             const response = await fetch("api/auth/register", {

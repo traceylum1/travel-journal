@@ -95,6 +95,41 @@ describe("apiCalls", () => {
     });
   });
 
+  describe("logout", () => {
+    it("POSTs to api/auth/logout with same-origin credentials", async () => {
+      const fetchMock = vi.mocked(globalThis.fetch);
+      fetchMock.mockResolvedValueOnce(
+        testJsonResponse({ status: "logged out" }, { status: 200, ok: true }),
+      );
+
+      const result = await apiCalls.logout();
+
+      expect(fetchMock).toHaveBeenCalledWith("api/auth/logout", {
+        method: "POST",
+        credentials: "same-origin",
+      });
+      expect(result).toEqual({ success: true });
+    });
+
+    it("returns success false when response is not ok", async () => {
+      vi.mocked(globalThis.fetch).mockResolvedValueOnce(
+        testJsonResponse({}, { ok: false, status: 500 }),
+      );
+
+      const result = await apiCalls.logout();
+
+      expect(result).toEqual({ success: false });
+    });
+
+    it("returns success false when fetch rejects", async () => {
+      vi.mocked(globalThis.fetch).mockRejectedValueOnce(new Error("offline"));
+
+      const result = await apiCalls.logout();
+
+      expect(result).toEqual({ success: false });
+    });
+  });
+
   describe("register", () => {
     it("POSTs to api/auth/register with username and password", async () => {
       const fetchMock = vi.mocked(globalThis.fetch);

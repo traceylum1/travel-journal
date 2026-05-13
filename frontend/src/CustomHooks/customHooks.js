@@ -7,8 +7,12 @@ export function useLocalStorageState(key, initialValue) {
         if (storedValue === null) return initialValue;
         return storedValue;
     });
-        // Update local storage whenever state changes
+    // Update local storage whenever state changes (skip first run so we do not persist
+    // JSON "null" into an absent username key before login completes).
     useEffect(() => {
+        if (key === "username" && state === null && localStorage.getItem(key) === null) {
+            return;
+        }
         localStorage.setItem(key, JSON.stringify(state));
     }, [key, state]);
 

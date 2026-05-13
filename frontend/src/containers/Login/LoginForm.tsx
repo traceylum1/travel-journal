@@ -43,7 +43,8 @@ function LoginForm() {
         alert(response.message);
       } else {
         setResponseMessage(response.message);
-        // setTimeout(()=> window.location.reload(), 2500);
+        // Reload so App remounts with username in localStorage and hooks stay in sync (same as sign-up).
+        window.location.reload();
       }
 
     } catch (error) {

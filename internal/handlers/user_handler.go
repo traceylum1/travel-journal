@@ -121,4 +121,9 @@ func (h *UserHandler) UserLogin(sm *session.Manager) gin.HandlerFunc {
 	}
 }
 
-
+func (h *UserHandler) Logout(sm *session.Manager) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		sm.Logout(c)
+		c.JSON(http.StatusOK, gin.H{"status": "logged out"})
+	}
+}

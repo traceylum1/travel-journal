@@ -2,12 +2,12 @@ package session
 
 import (
 	"crypto/rand"
-	"time"
 	"encoding/base64"
 	"io"
 	"log"
 	"net/http"
-	
+	"time"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -120,5 +120,26 @@ func (m *Manager) Create(c *gin.Context) error {
 	})
 	log.Println("idleExpiration:", m.idleExpiration)
 
-	return nil;
+	return nil
+}
+
+// Logout removes the session from the store (if present) and clears the session cookie.
+func (m *Manager) Logout(c *gin.Context) {
+	cookie, err := c.Cookie(m.cookieName)
+	if err == nil && cookie != "" {
+		if err := m.store.destroy(cookie); err != nil {
+			log.Printf("session destroy on logout: %v", err)
+		}
+	}
+
+	c.SetCookieData(&http.Cookie{
+		Name:     m.cookieName,
+		Value:    "",
+		Path:     "/",
+		MaxAge:   -1,
+		Expires:  time.Unix(0, 0),
+		HttpOnly: true,
+		SameSite: http.SameSiteLaxMode,
+		Secure:   false,
+	})
 }
