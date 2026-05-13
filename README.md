@@ -9,43 +9,39 @@ A small full-stack app for logging trips on a map: register, sign in, create tri
 
 ## Prerequisites
 
-- Go 1.25+
-- Node.js 20+ (or current LTS) and npm
-- A running PostgreSQL instance and a connection URL
+- [Docker](https://docs.docker.com/get-docker/) and Docker Compose (run the app)
+- Go 1.25+ and Node.js 20+ (or current LTS) for tests, lint, and the E2E workflow
 
 ## Configuration
 
-The API reads **`DATABASE_URL`** (a standard Postgres URL, for example `postgres://user:pass@localhost:5432/dbname?sslmode=disable`). Set it in your environment or in a `.env` file if your tooling loads it before `go run`.
+With `docker compose up`, the API’s **`DATABASE_URL`** is set in [`docker-compose.yml`](docker-compose.yml). For host-only commands (E2E, `go test`, `npm run e2e`, etc.), set `DATABASE_URL` yourself—see [E2E_DATABASE.md](E2E_DATABASE.md) for the E2E database URL.
 
-Schema is defined in `internal/db/schema.go`. For a fresh database, ensure tables exist (the repo includes `cmd/e2e-db-prep` which applies schema idempotently—see below).
+Schema lives in `internal/db/schema.go`. The API container runs `go run ./cmd/e2e-db-prep` before the server so the dev database schema is applied idempotently.
 
 ## Run locally
 
-From the repository root, start the API on **:8080** and the Vite dev server together:
+From the repository root:
 
 ```sh
-./scripts/dev.sh
+docker compose up
 ```
 
-The dev server proxies `/api` to `http://localhost:8080` (see `frontend/vite.config.js`).
+**URLs**
 
-### Run services separately
+- Frontend (Vite): [http://localhost:5173](http://localhost:5173)
+- API: [http://localhost:8080](http://localhost:8080)
 
-Terminal 1 — API (requires `DATABASE_URL`):
+The Vite dev server proxies `/api` to the API (see `frontend/vite.config.js`; Compose sets `API_PROXY_TARGET` for the frontend service).
 
-```sh
-go run ./cmd/server
-```
+Postgres is exposed on the host at port **5434** (container port 5432) so it does not clash with a local Postgres on 5432. For optional host tools (`psql`, GUI clients), credentials match [`docker-compose.yml`](docker-compose.yml), for example:
 
-Terminal 2 — frontend:
+`postgres://travel_journal:travel_journal@localhost:5434/travel_journal_dev?sslmode=disable`
 
-```sh
-cd frontend && npm install && npm run dev
-```
-
-Open the URL Vite prints (typically `http://localhost:5173`).
+[`docker-compose.e2e.yml`](docker-compose.e2e.yml) is only for Playwright/E2E Postgres; it uses a different database and port than this dev stack.
 
 ## Scripts (frontend)
+
+Run these from `frontend/` on your machine (tests and tooling are not wired into the Compose dev services):
 
 | Command | Purpose |
 |--------|---------|
@@ -79,4 +75,3 @@ Quick outline:
 | `internal/router` | Route registration |
 | `internal/session` | Session middleware and store |
 | `frontend/` | React + Vite app |
-| `scripts/dev.sh` | Local API + frontend |
