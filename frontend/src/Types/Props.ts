@@ -1,10 +1,10 @@
+import type Leaflet from 'leaflet';
 import { LatLng } from 'leaflet-geosearch/dist/providers/provider.js';
 import Trie from '../Containers/Controls/CreateTrip/Trie';
 
 export interface MapProps {
     addMarker: boolean,
     setAddMarker: React.Dispatch<React.SetStateAction<boolean>>,
-    tripID: number | null,
 }
 
 export interface TripListProps {
@@ -52,7 +52,7 @@ export interface HandleClickAddMarkerProps {
     addMarker: boolean,
     setAddMarker: React.Dispatch<React.SetStateAction<boolean>>,
     map: L.Map,
-    L: any
+    L: typeof Leaflet
 }
 
 export interface HandleClickSaveMarkerProps {

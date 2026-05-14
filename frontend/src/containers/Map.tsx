@@ -6,7 +6,7 @@ import * as GeoSearch from 'leaflet-geosearch';
 import markerHandlers from '../EventHandlers/markerHandlers';
 import { MapProps } from '../Types/Props';
 
-function Map({ addMarker, setAddMarker, tripID}: MapProps) {
+function Map({ addMarker, setAddMarker }: MapProps) {
   const mapRef = useRef(null);
 
   useEffect(() => {
@@ -50,7 +50,7 @@ function Map({ addMarker, setAddMarker, tripID}: MapProps) {
 
     // Cleanup when addMarker changes or component unmounts
     return () => map.off("click", markerHandler);
-  }, [addMarker]); // <-- update listeners only when needed
+  }, [addMarker, setAddMarker]);
   
 
   return <div id='map' className="h-full w-full"></div>

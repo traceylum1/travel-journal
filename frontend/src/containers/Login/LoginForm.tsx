@@ -22,12 +22,6 @@ function LoginForm() {
     setPassword(e.target.value);
   }
 
-  function clearForm() {
-    document.getElementById("login-form").reset()
-    setUsername("");
-    setPassword("");
-  };
-
   async function handleLogin(e: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
     e.preventDefault();
     if (!isUsernamePasswordValid(username, password)) {
