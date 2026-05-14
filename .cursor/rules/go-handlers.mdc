@@ -1,0 +1,15 @@
+---
+description: Go HTTP handler and API conventions
+globs: "**/*.go"
+alwaysApply: false
+---
+
+# Handlers
+
+- Validate input at the boundary; return appropriate 4xx responses with a JSON error shape consistent with other handlers in this API.
+- Respect cookie-based sessions and existing auth middleware patterns.
+
+# Logging
+
+- Use structured logging only where the codebase already does; add context (e.g. request identifiers) when matching local style.
+- Never log secrets, session tokens, passwords, or full bodies that may contain credentials.

@@ -1,0 +1,16 @@
+---
+description: Stack, layout, and commands for Travel Journal
+alwaysApply: true
+---
+
+# Project context
+
+- **Frontend:** React 19, Vite 7, TypeScript, Tailwind CSS 4, Leaflet — under `frontend/`. Vite proxies `/api` to the Go API (`frontend/vite.config.js`).
+- **Backend:** Go (Gin, pgx/PostgreSQL). HTTP API with cookie-based sessions. Entrypoints under `cmd/`; shared code under `internal/`.
+- Prefer existing patterns and dependencies over adding new libraries unless the user asks.
+
+# Commands
+
+- Prefer **`make`** from the repo root when it fits: `make lint` runs frontend ESLint and `go vet ./...`. Optional: `make lint-golangci` if golangci-lint is installed.
+- Frontend: `cd frontend && npm run dev|build|lint|test|e2e` as needed.
+- Local stack: `docker compose up` (see README for URLs and `DATABASE_URL` notes).

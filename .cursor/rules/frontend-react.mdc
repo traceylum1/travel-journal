@@ -1,0 +1,20 @@
+---
+description: React/TSX (and JSX) UI patterns for the frontend
+globs:
+  - "frontend/**/*.tsx"
+  - "frontend/**/*.jsx"
+alwaysApply: false
+---
+
+# UI components
+
+- Functional components only; no class components.
+- Prefer colocated hooks in the same file or a sibling module next to the component (match how `CustomHooks/` and existing containers do it).
+
+# Types
+
+- Avoid `any`. If types are unknown, use `unknown` and narrow.
+
+# Imports
+
+- Match the existing import style in the file you edit (path vs relative).
