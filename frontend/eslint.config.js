@@ -1,4 +1,5 @@
 import js from '@eslint/js'
+import stylistic from '@stylistic/eslint-plugin'
 import globals from 'globals'
 import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
@@ -22,6 +23,25 @@ export default defineConfig([
     files: ['vite.config.js'],
     languageOptions: {
       globals: globals.node,
+    },
+  },
+  {
+    files: ['**/*.{js,jsx,ts,tsx}'],
+    plugins: { '@stylistic': stylistic },
+    rules: {
+      '@stylistic/indent': [
+        'error',
+        2,
+        {
+          SwitchCase: 1,
+          ignoredNodes: [
+            'TSUnionType',
+            'FunctionExpression > .params[decorators]',
+            'FunctionExpression > .params > :matches(Decorator, :not(:first-child))',
+          ],
+        },
+      ],
+      '@stylistic/no-mixed-spaces-and-tabs': 'error',
     },
   },
   {

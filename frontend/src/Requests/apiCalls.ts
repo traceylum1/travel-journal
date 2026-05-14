@@ -2,237 +2,237 @@ import { AddMarkerProps, UserCredentialsProps, CreateTripProps, UpdateMarkerProp
 
 
 const apiCalls = {
-    login: async function ({ username, password }: UserCredentialsProps) {
-        try {
-            const response = await fetch("api/auth/login", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ username, password }),
-            });
+  login: async function ({ username, password }: UserCredentialsProps) {
+    try {
+      const response = await fetch("api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username, password }),
+      });
 
-            // Request reached the server, but login failed
-            if (response.status === 401) {
-                return {
-                    success: false,
-                    type: "AUTH",
-                    message: "Invalid username or password",
-                };
-            }
+      // Request reached the server, but login failed
+      if (response.status === 401) {
+        return {
+          success: false,
+          type: "AUTH",
+          message: "Invalid username or password",
+        };
+      }
 
-            // Other non-OK HTTP errors (500, 503, etc.)
-            if (!response.ok) {
-                throw new Error(`Server error: ${response.status}`);
-            }
+      // Other non-OK HTTP errors (500, 503, etc.)
+      if (!response.ok) {
+        throw new Error(`Server error: ${response.status}`);
+      }
 
-            // Successful login
-            const data = await response.json();
+      // Successful login
+      const data = await response.json();
 
-            localStorage.setItem("username", JSON.stringify(username));
-            localStorage.setItem("userId", JSON.stringify(data.user_id));
+      localStorage.setItem("username", JSON.stringify(username));
+      localStorage.setItem("userId", JSON.stringify(data.user_id));
 
-            return {
-                success: true,
-                message: "Successfully logged in!"
-            };
+      return {
+        success: true,
+        message: "Successfully logged in!"
+      };
 
-        } catch {
-            // Network error, CORS, timeout, DNS, etc.
-            return {
-                success: false,
-                type: "NETWORK",
-                message: "Unable to reach server. Please try again.",
-            };
-        }
-    },
+    } catch {
+      // Network error, CORS, timeout, DNS, etc.
+      return {
+        success: false,
+        type: "NETWORK",
+        message: "Unable to reach server. Please try again.",
+      };
+    }
+  },
 
-    logout: async function () {
-        try {
-            const response = await fetch("api/auth/logout", {
-                method: "POST",
-                credentials: "same-origin",
-            });
-            return { success: response.ok };
-        } catch {
-            return { success: false };
-        }
-    },
+  logout: async function () {
+    try {
+      const response = await fetch("api/auth/logout", {
+        method: "POST",
+        credentials: "same-origin",
+      });
+      return { success: response.ok };
+    } catch {
+      return { success: false };
+    }
+  },
 
-    register: async function ({ username, password }: UserCredentialsProps) {
-        try {
-            const response = await fetch("api/auth/register", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    username: username,
-                    password: password,
-                })
-            })
+  register: async function ({ username, password }: UserCredentialsProps) {
+    try {
+      const response = await fetch("api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: username,
+          password: password,
+        })
+      })
 
-            // Request reached the server, but did not create new user
-            if (response.status === 409) {
-                return {
-                    success: false,
-                    message: "Username already exists. Please try a new username.",
-                };
-            }
+      // Request reached the server, but did not create new user
+      if (response.status === 409) {
+        return {
+          success: false,
+          message: "Username already exists. Please try a new username.",
+        };
+      }
 
-            if (!response.ok) {
-                throw new Error(`Response status: ${response.status}`);
-            }
+      if (!response.ok) {
+        throw new Error(`Response status: ${response.status}`);
+      }
 
-            // Successful register
-            const data = await response.json();
+      // Successful register
+      const data = await response.json();
 
-            localStorage.setItem("username", JSON.stringify(username));
-            localStorage.setItem("userId", JSON.stringify(data.user_id));
+      localStorage.setItem("username", JSON.stringify(username));
+      localStorage.setItem("userId", JSON.stringify(data.user_id));
 
-            return {
-                success: true,
-                message: "Successfully signed up!"
-            };
-        } catch {
-            // Network error, CORS, timeout, DNS, etc.
-            return {
-                success: false,
-                type: "NETWORK",
-                message: "Unable to reach server. Please try again.",
-            };
-        }
-    },
+      return {
+        success: true,
+        message: "Successfully signed up!"
+      };
+    } catch {
+      // Network error, CORS, timeout, DNS, etc.
+      return {
+        success: false,
+        type: "NETWORK",
+        message: "Unable to reach server. Please try again.",
+      };
+    }
+  },
 
-    createTrip: async function ({ tripName, description, startDate, endDate }: CreateTripProps) {
-        const usernameValue = localStorage.getItem("username");
-        const username = usernameValue ? JSON.parse(usernameValue) : null;
-        const userIdValue = localStorage.getItem("userId");
-        const ownerId = userIdValue ? Number(JSON.parse(userIdValue)) : NaN;
+  createTrip: async function ({ tripName, description, startDate, endDate }: CreateTripProps) {
+    const usernameValue = localStorage.getItem("username");
+    const username = usernameValue ? JSON.parse(usernameValue) : null;
+    const userIdValue = localStorage.getItem("userId");
+    const ownerId = userIdValue ? Number(JSON.parse(userIdValue)) : NaN;
 
-        if (!username || Number.isNaN(ownerId)) {
-            return {
-                success: false,
-                message: "Missing user session. Please log in again.",
-            };
-        }
+    if (!username || Number.isNaN(ownerId)) {
+      return {
+        success: false,
+        message: "Missing user session. Please log in again.",
+      };
+    }
 
-        try {
-            const response = await fetch("/api/protected/createTrip", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ 
-                    trip_name: tripName, 
-                    description: description, 
-                    start_date: startDate, 
-                    end_date: endDate,
-                    created_by: username,
-                    owner_id: ownerId,
-                }),
-            });
+    try {
+      const response = await fetch("/api/protected/createTrip", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ 
+          trip_name: tripName, 
+          description: description, 
+          start_date: startDate, 
+          end_date: endDate,
+          created_by: username,
+          owner_id: ownerId,
+        }),
+      });
 
-            if (!response.ok) {
-                throw new Error(`Response status: ${response.status}`);
-            }
+      if (!response.ok) {
+        throw new Error(`Response status: ${response.status}`);
+      }
 
-            const result = await response.json();
-            return {
-                success: true,
-                tripId: result.trip_id,
-            };
-        } catch (error) {
-            console.error(error instanceof Error ? error.message : "Unknown error");
-            return {
-                success: false,
-                message: "Unable to create trip right now.",
-            };
-        }
-    },
+      const result = await response.json();
+      return {
+        success: true,
+        tripId: result.trip_id,
+      };
+    } catch (error) {
+      console.error(error instanceof Error ? error.message : "Unknown error");
+      return {
+        success: false,
+        message: "Unable to create trip right now.",
+      };
+    }
+  },
     
-    addMarker: async function ({ tripId, markerLocation, markerDescription, markerDate, markerLat, markerLng, username }: AddMarkerProps) {
-        try {
-            const response = await fetch("/api/protected/addMarker", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ 
-                    trip_id: Number(tripId), 
-                    location: markerLocation, 
-                    description: markerDescription, 
-                    date: markerDate, 
-                    latitude: Number(markerLat), 
-                    longitude: Number(markerLng), 
-                    created_by: username 
-                }),
-            });
+  addMarker: async function ({ tripId, markerLocation, markerDescription, markerDate, markerLat, markerLng, username }: AddMarkerProps) {
+    try {
+      const response = await fetch("/api/protected/addMarker", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ 
+          trip_id: Number(tripId), 
+          location: markerLocation, 
+          description: markerDescription, 
+          date: markerDate, 
+          latitude: Number(markerLat), 
+          longitude: Number(markerLng), 
+          created_by: username 
+        }),
+      });
 
-            const data = await response.json();
+      const data = await response.json();
 
-            if (!response.ok) {
-                throw new Error(data.error || "Unknown server error");
-            }
+      if (!response.ok) {
+        throw new Error(data.error || "Unknown server error");
+      }
 
-            return {
-                success: true,
-                markerId: data.marker_id,
-            } as MarkerSaveResult;
-        } catch (error) {
-            console.error(error instanceof Error ? error.message : "Unknown error");
-            return {
-                success: false,
-            } as MarkerSaveResult;
-        }
-    },
+      return {
+        success: true,
+        markerId: data.marker_id,
+      } as MarkerSaveResult;
+    } catch (error) {
+      console.error(error instanceof Error ? error.message : "Unknown error");
+      return {
+        success: false,
+      } as MarkerSaveResult;
+    }
+  },
 
-    updateMarker: async function ({ markerId, markerLocation, markerDescription, markerDate }: UpdateMarkerProps) {
-        try {
-            const response = await fetch(`/api/protected/marker/${markerId}`, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    location: markerLocation,
-                    description: markerDescription,
-                    date: markerDate,
-                }),
-            });
+  updateMarker: async function ({ markerId, markerLocation, markerDescription, markerDate }: UpdateMarkerProps) {
+    try {
+      const response = await fetch(`/api/protected/marker/${markerId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          location: markerLocation,
+          description: markerDescription,
+          date: markerDate,
+        }),
+      });
 
-            if (!response.ok) {
-                const data = await response.json();
-                throw new Error(data.error || "Unknown server error");
-            }
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || "Unknown server error");
+      }
 
-            return {
-                success: true,
-                markerId: markerId,
-            } as MarkerSaveResult;
-        } catch (error) {
-            console.error(error instanceof Error ? error.message : "Unknown error");
-            return {
-                success: false,
-            } as MarkerSaveResult;
-        }
-    },
+      return {
+        success: true,
+        markerId: markerId,
+      } as MarkerSaveResult;
+    } catch (error) {
+      console.error(error instanceof Error ? error.message : "Unknown error");
+      return {
+        success: false,
+      } as MarkerSaveResult;
+    }
+  },
 
-    deleteMarker: async function ({ markerId }: DeleteMarkerProps) {
-        try {
-            const response = await fetch(`/api/protected/marker/${markerId}`, {
-                method: "DELETE",
-            });
-            if (!response.ok) {
-                const data = await response.json();
-                throw new Error(data.error || "Unknown server error");
-            }
-            return true;
-        } catch (error) {
-            console.error(error instanceof Error ? error.message : "Unknown error");
-            return false;
-        }
-    },
+  deleteMarker: async function ({ markerId }: DeleteMarkerProps) {
+    try {
+      const response = await fetch(`/api/protected/marker/${markerId}`, {
+        method: "DELETE",
+      });
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || "Unknown server error");
+      }
+      return true;
+    } catch (error) {
+      console.error(error instanceof Error ? error.message : "Unknown error");
+      return false;
+    }
+  },
 }
 
 export default apiCalls;

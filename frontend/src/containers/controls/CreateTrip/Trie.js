@@ -6,9 +6,9 @@ class Trie {
   insert(word) {
     let node = this.root;
     for (let c of word) {
-        const cLowerCase = c.toLowerCase();
-        if (node[cLowerCase] == null) node[cLowerCase] = {};
-        node = node[cLowerCase];
+      const cLowerCase = c.toLowerCase();
+      if (node[cLowerCase] == null) node[cLowerCase] = {};
+      node = node[cLowerCase];
     }
     node.word = word;
   }
@@ -33,16 +33,16 @@ class Trie {
 
   getAllWords(node) {
     if (node === null) {
-        return [];
+      return [];
     } else if (node && ("word" in node)) { 
-        return [node.word]
+      return [node.word]
     } 
 
     let res = [];
 
     for (const nextNode of Object.values(node)) {
-        const foundWord = this.getAllWords(nextNode)
-        res = res.concat(foundWord);
+      const foundWord = this.getAllWords(nextNode)
+      res = res.concat(foundWord);
     }
     return res;
   }

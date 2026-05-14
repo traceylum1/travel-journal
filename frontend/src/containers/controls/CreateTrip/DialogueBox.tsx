@@ -22,7 +22,7 @@ function DialogueBox({ isOpen, onClose, title, children }) {
         <h2 className="m-0 text-xl font-semibold text-zinc-900">{title}</h2>
       </div>
       <div className="px-5 py-4">
-      {children}
+        {children}
       </div>
       <div className="flex justify-end border-t border-zinc-200 px-5 py-3">
         <button className="control-button w-24" onClick={onClose}>Close</button>
