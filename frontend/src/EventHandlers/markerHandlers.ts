@@ -1,11 +1,12 @@
 import apiCalls from "../Requests/apiCalls";
-import { HandleClickAddMarkerProps, HandleClickSaveMarkerProps, MarkerSaveResult } from "../Types/Props";
+import { AddMarkerProps, SaveMarkerProps } from "../Types/Props";
+import { MarkerSaveResult } from "../Types/Response";
 import { createElement } from "react";
 import { createRoot } from "react-dom/client";
 import MarkerPopupContent, { type MarkerFormData } from "../containers/controls/MarkerPopupContent";
 
 const markerEventHandlers = {
-  handleClickAddMarker: function({e, addMarker, setAddMarker, map, L}: HandleClickAddMarkerProps)  {
+  addMarker: function({e, addMarker, setAddMarker, map, L}: AddMarkerProps)  {
     if (!addMarker) return;
 
     const marker = L.marker([e.latlng.lat, e.latlng.lng]).addTo(map);
@@ -55,38 +56,39 @@ const markerEventHandlers = {
   },
 
   // TODO: Pass in appropriate tripID and get username from local storage
-  handleClickSaveMarker: async ({
+  saveMarker: async ({
     markerId,
     markerLat,
     markerLng,
     markerDate,
     markerLocation,
     markerDescription,
-  }: HandleClickSaveMarkerProps ) => {
+  }: SaveMarkerProps ) => {
     const username = "Marcus";
     const tripId = 1;
 
     if (typeof markerId === "number") {
-      return apiCalls.updateMarker({
-        markerId,
-        markerLocation,
-        markerDescription,
+      return apiCalls.updateMarker({ 
+        markerId, 
+        markerLocation, 
+        markerDescription, 
         markerDate,
       });
+    } else {
+      return apiCalls.addMarker({ 
+        tripId, 
+        markerLocation, 
+        markerDescription, 
+        markerDate, 
+        markerLat, 
+        markerLng, 
+        username,
+        e,
+      });
     }
-
-    return apiCalls.addMarker({
-      tripId: tripId,
-      markerLocation: markerLocation,
-      markerDescription: markerDescription,
-      markerDate: markerDate,
-      markerLat: markerLat,
-      markerLng: markerLng,
-      username: username
-    });
   },
 
-  handleClickEditMarker: async function() {
+  editMarker: async function() {
 
   }
 }

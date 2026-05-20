@@ -1,51 +1,38 @@
 import apiCalls from "../Requests/apiCalls";
+import { CreateTripProps } from "../Types/Props";
 
 const tripEventHandlers = {
-    handleClickSaveMarker: async ({tripName, description, startDate, endDate}: HandleClickSaveMarkerProps ) => {
-        const username = "Marcus";
-        const tripId = "1";
+  createTrip: async function({tripName, description, startDate, endDate}: CreateTripProps ) {
+    const usernameValue = localStorage.getItem("username");
+    const username = usernameValue ? JSON.parse(usernameValue) : null;
+    const userIdValue = localStorage.getItem("userId");
+    const ownerId = userIdValue ? Number(JSON.parse(userIdValue)) : NaN;
 
-        const markerLocation = document.querySelector("#marker-location").value;
-        console.log("markerLocation", markerLocation);
+    try {
+      const result = await apiCalls.createTrip({
+        tripName: tripName,
+        description: description,
+        startDate: startDate,
+        endDate: endDate,
+        createdBy: username,
+        ownerId: ownerId,
+      });
 
-        const markerDescription = document.querySelector("#marker-description").value;
-        console.log("markerDescription", markerDescription);
-
-        const markerDate = document.querySelector('input[type="date"]').value;
-        console.log("markerDate", markerDate);
-        
-        
-        try {
-            await apiCalls.createTrip({ 
-                tripName: tripName, 
-                description: markerLocation, 
-                startDate: markerDescription, 
-                endDate: markerDate, 
-            });
-
-            popupContent.innerHTML = `
-                <div style="width: 15em">
-                    Date:
-                    <div style="background-color: gainsboro">
-                        ${markerDate}
-                    </div>
-                    Location:
-                    <div style="white-space: pre-wrap; background-color: gainsboro; height: 3em; overflow-x: none; overflow-y: auto">${markerLocation}
-                    </div>
-                    Description:
-                    <div style="white-space: pre-wrap; background-color: gainsboro; height: 6em; overflow-x: none; overflow-y: auto">${markerDescription}
-                    </div>
-                    <br/>
-                    <div style="display: flex; justify-content: space-evenly">
-                        <button id="edit-marker-btn">Edit</button>
-                        <button id="delete-marker-btn">Delete</button>
-                    </div>
-                <div/>
-            `;
-
-        } catch {
-            console.error("failed to save marker");
-        }
-
-    },
+      if (result.success) {
+        return result;
+      } else {
+        return {
+          success: false,
+          message: "Failed to create trip. Please try again.",
+        };
+      }
+    } catch {
+      return {
+        success: false,
+        message: "Failed to create trip. Please try again.",
+      };
+    }
+  },
 }
+
+export default tripEventHandlers;

@@ -1,4 +1,5 @@
-import { AddMarkerProps, UserCredentialsProps, CreateTripProps, UpdateMarkerProps, DeleteMarkerProps, MarkerSaveResult } from "../Types/Props";
+import { AddMarkerProps, UserCredentialsProps, CreateTripProps, UpdateMarkerProps, DeleteMarkerProps } from "../Types/Props";
+import { MarkerSaveResult } from "../Types/Response";
 
 
 const apiCalls = {

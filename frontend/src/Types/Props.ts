@@ -47,7 +47,7 @@ export interface CountryListProps {
 }
 
 // TODO: Figure out leaflet types for L, or change to L.Marker
-export interface HandleClickAddMarkerProps {
+export interface AddMarkerProps {
   e: L.LeafletMouseEvent,
   addMarker: boolean,
   setAddMarker: React.Dispatch<React.SetStateAction<boolean>>,
@@ -55,7 +55,7 @@ export interface HandleClickAddMarkerProps {
   L: typeof Leaflet
 }
 
-export interface HandleClickSaveMarkerProps {
+export interface SaveMarkerProps {
   markerId?: number,
   markerLat: number,
   markerLng: number,
@@ -88,11 +88,6 @@ export interface UpdateMarkerProps {
 
 export interface DeleteMarkerProps {
   markerId: number,
-}
-
-export interface MarkerSaveResult {
-  success: boolean,
-  markerId?: number,
 }
 
 export interface CreateTripProps {
