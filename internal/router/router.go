@@ -16,6 +16,7 @@ func NewRouter(
 	r := gin.Default()
 
 	auth := r.Group("/api/auth")
+	auth.GET("me", userHandler.CurrentUser(sm))
 	auth.POST("register", userHandler.CreateUser(sm))
 	auth.POST("login", userHandler.UserLogin(sm))
 	auth.POST("logout", userHandler.Logout(sm))

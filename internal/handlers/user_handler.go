@@ -121,6 +121,33 @@ func (h *UserHandler) UserLogin(sm *session.Manager) gin.HandlerFunc {
 	}
 }
 
+func (h *UserHandler) CurrentUser(sm *session.Manager) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		s, ok := sm.Get(c)
+		if !ok {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "missing or invalid session"})
+			return
+		}
+
+		userID, ok := s.UserID()
+		if !ok {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "missing or invalid session"})
+			return
+		}
+
+		username, ok := s.Username()
+		if !ok {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "missing or invalid session"})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"user_id":  userID,
+			"username": username,
+		})
+	}
+}
+
 func (h *UserHandler) Logout(sm *session.Manager) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		sm.Logout(c)
