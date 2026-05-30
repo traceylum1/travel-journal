@@ -67,7 +67,7 @@ func (h *UserHandler) CreateUser(sm *session.Manager) gin.HandlerFunc {
 			}
 			return
 		}
-		sm.Create(c)
+		sm.Create(c, userID, input.Username)
 		c.JSON(http.StatusCreated, gin.H{"user_id": userID})
 	}
 }
@@ -113,7 +113,7 @@ func (h *UserHandler) UserLogin(sm *session.Manager) gin.HandlerFunc {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to validate user"})
 			return
 		}
-		sm.Create(c)
+		sm.Create(c, user.ID, user.Username)
 		c.JSON(http.StatusOK, gin.H{
 			"status": "logged in",
 			"user_id": user.ID,

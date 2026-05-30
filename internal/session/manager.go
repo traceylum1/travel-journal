@@ -100,9 +100,29 @@ func (m *Manager) save(session *Session) error {
 	return nil
 }
 
-func (m *Manager) Create(c *gin.Context) error {
+func (m *Manager) Get(c *gin.Context) (*Session, bool) {
+	cookie, err := c.Cookie(m.cookieName)
+	if err != nil || cookie == "" {
+		return nil, false
+	}
+
+	session, err := m.store.read(cookie)
+	if err != nil || session == nil {
+		return nil, false
+	}
+
+	if !m.validate(session) {
+		return nil, false
+	}
+
+	return session, true
+}
+
+func (m *Manager) Create(c *gin.Context, userID int, username string) error {
 	log.Println("create session")
 	session := newSession()
+	session.Put(UserIDKey, userID)
+	session.Put(UsernameKey, username)
 
 	// Add essential headers
 	c.Header("Vary", "Cookie")
