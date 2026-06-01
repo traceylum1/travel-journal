@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import isUsernamePasswordValid from './FormValidation';
-import apiCalls from '../../Requests/apiCalls';
+import { useAuth } from '../../context/useAuth';
 
 function LoginForm() {
+  const { login, register } = useAuth();
   const [ username, setUsername ] = useState("");
   const [ password, setPassword ] = useState("");
   const [ responseMessage, setResponseMessage ] = useState("");
@@ -28,17 +29,15 @@ function LoginForm() {
       return;
     };
     try {
-      const response = await apiCalls.login({ 
-        username: username, 
-        password: password 
+      const response = await login({
+        username: username,
+        password: password,
       });
 
       if (!response.success) {
         alert(response.message);
       } else {
         setResponseMessage(response.message);
-        // Reload so App remounts with username in localStorage and hooks stay in sync (same as sign-up).
-        window.location.reload();
       }
 
     } catch (error) {
@@ -53,16 +52,15 @@ function LoginForm() {
     };
     // Send request to sign up
     try {
-      const response = await apiCalls.register({ 
-        username: username, 
-        password: password 
+      const response = await register({
+        username: username,
+        password: password,
       });
 
       if (!response.success) {
         alert(response.message);
       } else {
         setResponseMessage(response.message);
-        setTimeout(()=> window.location.reload(), 2500);
       }
 
     } catch (error) {

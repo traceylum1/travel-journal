@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
-import apiCalls from '../Requests/apiCalls';
+import { useAuth } from '../context/useAuth';
 
 type UserAccountMenuProps = {
-  username: string;
   onLoggedOut: () => void;
 };
 
-export default function UserAccountMenu({ username, onLoggedOut }: UserAccountMenuProps) {
+export default function UserAccountMenu({ onLoggedOut }: UserAccountMenuProps) {
+  const { user, logout } = useAuth();
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
 
@@ -32,9 +32,13 @@ export default function UserAccountMenu({ username, onLoggedOut }: UserAccountMe
   }, [open]);
 
   async function handleLogout() {
-    await apiCalls.logout();
+    await logout();
     setOpen(false);
     onLoggedOut();
+  }
+
+  if (!user) {
+    return null;
   }
 
   return (
@@ -46,7 +50,7 @@ export default function UserAccountMenu({ username, onLoggedOut }: UserAccountMe
         aria-haspopup="menu"
         onClick={() => setOpen((v) => !v)}
       >
-        <span className="max-w-[140px] truncate">{username}</span>
+        <span className="max-w-[140px] truncate">{user.username}</span>
         <span className="text-zinc-400" aria-hidden>
           ▾
         </span>

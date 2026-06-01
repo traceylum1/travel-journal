@@ -39,6 +39,7 @@ const apiCalls = {
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "same-origin",
         body: JSON.stringify({ username, password }),
       });
 
@@ -56,11 +57,7 @@ const apiCalls = {
         throw new Error(`Server error: ${response.status}`);
       }
 
-      // Successful login
-      const data = await response.json();
-
-      localStorage.setItem("username", JSON.stringify(username));
-      localStorage.setItem("userId", JSON.stringify(data.user_id));
+      await response.json();
 
       return {
         success: true,
@@ -96,6 +93,7 @@ const apiCalls = {
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "same-origin",
         body: JSON.stringify({
           username: username,
           password: password,
@@ -114,11 +112,7 @@ const apiCalls = {
         throw new Error(`Response status: ${response.status}`);
       }
 
-      // Successful register
-      const data = await response.json();
-
-      localStorage.setItem("username", JSON.stringify(username));
-      localStorage.setItem("userId", JSON.stringify(data.user_id));
+      await response.json();
 
       return {
         success: true,
@@ -134,13 +128,15 @@ const apiCalls = {
     }
   },
 
-  createTrip: async function ({ tripName, description, startDate, endDate }: CreateTripProps) {
-    const usernameValue = localStorage.getItem("username");
-    const username = usernameValue ? JSON.parse(usernameValue) : null;
-    const userIdValue = localStorage.getItem("userId");
-    const ownerId = userIdValue ? Number(JSON.parse(userIdValue)) : NaN;
-
-    if (!username || Number.isNaN(ownerId)) {
+  createTrip: async function ({
+    tripName,
+    description,
+    startDate,
+    endDate,
+    createdBy,
+    ownerId,
+  }: CreateTripProps) {
+    if (!createdBy || Number.isNaN(ownerId)) {
       return {
         success: false,
         message: "Missing user session. Please log in again.",
@@ -153,12 +149,13 @@ const apiCalls = {
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "same-origin",
         body: JSON.stringify({ 
           trip_name: tripName, 
           description: description, 
           start_date: startDate, 
           end_date: endDate,
-          created_by: username,
+          created_by: createdBy,
           owner_id: ownerId,
         }),
       });
@@ -188,6 +185,7 @@ const apiCalls = {
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "same-origin",
         body: JSON.stringify({ 
           trip_id: Number(tripId), 
           location: markerLocation, 
@@ -224,6 +222,7 @@ const apiCalls = {
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "same-origin",
         body: JSON.stringify({
           location: markerLocation,
           description: markerDescription,
@@ -252,6 +251,7 @@ const apiCalls = {
     try {
       const response = await fetch(`/api/protected/marker/${markerId}`, {
         method: "DELETE",
+        credentials: "same-origin",
       });
       if (!response.ok) {
         const data = await response.json();

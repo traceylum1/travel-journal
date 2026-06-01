@@ -95,4 +95,6 @@ export interface CreateTripProps {
   description: string,
   startDate: string,
   endDate: string,
+  createdBy: string,
+  ownerId: number,
 }

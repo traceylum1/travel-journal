@@ -33,6 +33,7 @@ describe("apiCalls", () => {
       expect(fetchMock).toHaveBeenCalledWith("api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "same-origin",
         body: JSON.stringify({ username: "u", password: "p" }),
       });
     });
@@ -53,7 +54,7 @@ describe("apiCalls", () => {
       expect(localStorage.getItem("userId")).toBeNull();
     });
 
-    it("sets localStorage and returns success on 200 with user_id", async () => {
+    it("returns success on 200 without writing localStorage", async () => {
       vi.mocked(globalThis.fetch).mockResolvedValueOnce(
         testJsonResponse({ user_id: 42 }, { status: 200, ok: true }),
       );
@@ -64,8 +65,8 @@ describe("apiCalls", () => {
         success: true,
         message: "Successfully logged in!",
       });
-      expect(localStorage.getItem("username")).toBe(JSON.stringify("alice"));
-      expect(localStorage.getItem("userId")).toBe(JSON.stringify(42));
+      expect(localStorage.getItem("username")).toBeNull();
+      expect(localStorage.getItem("userId")).toBeNull();
     });
 
     it("returns NETWORK on non-401 non-OK response", async () => {
@@ -142,6 +143,7 @@ describe("apiCalls", () => {
       expect(fetchMock).toHaveBeenCalledWith("api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "same-origin",
         body: JSON.stringify({ username: "new", password: "pw" }),
       });
     });
@@ -160,7 +162,7 @@ describe("apiCalls", () => {
       expect(localStorage.getItem("username")).toBeNull();
     });
 
-    it("sets localStorage and returns success when registration succeeds", async () => {
+    it("returns success when registration succeeds without writing localStorage", async () => {
       vi.mocked(globalThis.fetch).mockResolvedValueOnce(
         testJsonResponse({ user_id: 99 }, { status: 201, ok: true }),
       );
@@ -171,8 +173,8 @@ describe("apiCalls", () => {
         success: true,
         message: "Successfully signed up!",
       });
-      expect(localStorage.getItem("username")).toBe(JSON.stringify("bob"));
-      expect(localStorage.getItem("userId")).toBe(JSON.stringify(99));
+      expect(localStorage.getItem("username")).toBeNull();
+      expect(localStorage.getItem("userId")).toBeNull();
     });
 
     it("returns NETWORK on non-OK non-409 response", async () => {
@@ -202,18 +204,66 @@ describe("apiCalls", () => {
     });
   });
 
+  describe("getCurrentUser", () => {
+    it("GETs api/auth/me with same-origin credentials", async () => {
+      const fetchMock = vi.mocked(globalThis.fetch);
+      fetchMock.mockResolvedValueOnce(
+        testJsonResponse({ user_id: 5, username: "alice" }, { status: 200, ok: true }),
+      );
+
+      await apiCalls.getCurrentUser();
+
+      expect(fetchMock).toHaveBeenCalledWith("api/auth/me", {
+        credentials: "same-origin",
+      });
+    });
+
+    it("returns user on 200", async () => {
+      vi.mocked(globalThis.fetch).mockResolvedValueOnce(
+        testJsonResponse({ user_id: 5, username: "alice" }, { status: 200, ok: true }),
+      );
+
+      const user = await apiCalls.getCurrentUser();
+
+      expect(user).toEqual({ userId: 5, username: "alice" });
+    });
+
+    it("returns null on 401", async () => {
+      vi.mocked(globalThis.fetch).mockResolvedValueOnce(
+        testJsonResponse({}, { ok: false, status: 401 }),
+      );
+
+      const user = await apiCalls.getCurrentUser();
+
+      expect(user).toBeNull();
+    });
+
+    it("returns null when fetch rejects", async () => {
+      vi.mocked(globalThis.fetch).mockRejectedValueOnce(new Error("offline"));
+
+      const user = await apiCalls.getCurrentUser();
+
+      expect(user).toBeNull();
+    });
+  });
+
   describe("createTrip", () => {
     const tripArgs = {
       tripName: "Paris",
       description: "Spring",
       startDate: "2025-04-01",
       endDate: "2025-04-10",
+      createdBy: "alice",
+      ownerId: 123,
     };
 
-    it("returns without calling fetch when session is missing", async () => {
+    it("returns without calling fetch when createdBy is missing", async () => {
       const fetchMock = vi.mocked(globalThis.fetch);
 
-      const result = await apiCalls.createTrip(tripArgs);
+      const result = await apiCalls.createTrip({
+        ...tripArgs,
+        createdBy: "",
+      });
 
       expect(result).toEqual({
         success: false,
@@ -223,19 +273,18 @@ describe("apiCalls", () => {
     });
 
     it("returns without calling fetch when ownerId is invalid", async () => {
-      localStorage.setItem("username", JSON.stringify("u"));
-      localStorage.setItem("userId", JSON.stringify("not-a-number"));
       const fetchMock = vi.mocked(globalThis.fetch);
 
-      const result = await apiCalls.createTrip(tripArgs);
+      const result = await apiCalls.createTrip({
+        ...tripArgs,
+        ownerId: NaN,
+      });
 
       expect(result.success).toBe(false);
       expect(fetchMock).not.toHaveBeenCalled();
     });
 
     it("POSTs snake_case body to /api/protected/createTrip and returns tripId on 200", async () => {
-      localStorage.setItem("username", JSON.stringify("alice"));
-      localStorage.setItem("userId", JSON.stringify(123));
       const fetchMock = vi.mocked(globalThis.fetch);
       fetchMock.mockResolvedValueOnce(
         testJsonResponse({ trip_id: 7 }, { status: 200, ok: true }),
@@ -246,6 +295,7 @@ describe("apiCalls", () => {
       expect(fetchMock).toHaveBeenCalledWith("/api/protected/createTrip", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "same-origin",
         body: JSON.stringify({
           trip_name: "Paris",
           description: "Spring",
@@ -259,8 +309,6 @@ describe("apiCalls", () => {
     });
 
     it("returns failure when response is not ok", async () => {
-      localStorage.setItem("username", JSON.stringify("alice"));
-      localStorage.setItem("userId", JSON.stringify(1));
       vi.mocked(globalThis.fetch).mockResolvedValueOnce(
         testJsonResponse({}, { ok: false, status: 500 }),
       );

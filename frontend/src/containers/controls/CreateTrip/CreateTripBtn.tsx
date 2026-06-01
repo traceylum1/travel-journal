@@ -3,9 +3,11 @@ import CountryList from './CountryList';
 import Trie from './Trie';
 import DialogueBox from './DialogueBox';
 import apiCalls from '../../../Requests/apiCalls';
+import { useAuth } from '../../../context/useAuth';
 import { CreateTripBtnProps, TripListItem } from '../../../Types/Props';
 
 function CreateTripBtn({ setTripList, setTripDisplay }: CreateTripBtnProps) {
+  const { user } = useAuth();
   const [input, setInput] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [tripName, setTripName] = useState("");
@@ -50,6 +52,8 @@ function CreateTripBtn({ setTripList, setTripDisplay }: CreateTripBtnProps) {
       description: description.trim(),
       startDate: startDate || formattedDateUtc,
       endDate: endDate || formattedDateUtc,
+      createdBy: user?.username ?? "",
+      ownerId: user?.userId ?? NaN,
     });
 
     if (!result.success) {
@@ -59,19 +63,14 @@ function CreateTripBtn({ setTripList, setTripDisplay }: CreateTripBtnProps) {
       return;
     }
 
-    const usernameValue = localStorage.getItem("username");
-    const createdBy = usernameValue ? JSON.parse(usernameValue) : "";
-    const userIdValue = localStorage.getItem("userId");
-    const ownerId = userIdValue ? Number(JSON.parse(userIdValue)) : 0;
-
     const newTrip: TripListItem = {
       trip_id: result.tripId ?? Date.now(),
       trip_name: tripName.trim(),
       description: description.trim(),
       start_date: startDate || formattedDateUtc,
       end_date: endDate || formattedDateUtc,
-      created_by: createdBy,
-      owner_id: ownerId,
+      created_by: user?.username ?? "",
+      owner_id: user?.userId ?? 0,
     };
 
     setTripList((previousTrips) => [...previousTrips, newTrip]);
