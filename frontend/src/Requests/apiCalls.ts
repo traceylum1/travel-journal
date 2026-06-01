@@ -2,7 +2,36 @@ import { AddMarkerProps, UserCredentialsProps, CreateTripProps, UpdateMarkerProp
 import { MarkerSaveResult } from "../Types/Response";
 
 
+export type CurrentUser = {
+  userId: number;
+  username: string;
+};
+
 const apiCalls = {
+  getCurrentUser: async function (): Promise<CurrentUser | null> {
+    try {
+      const response = await fetch("api/auth/me", {
+        credentials: "same-origin",
+      });
+
+      if (response.status === 401) {
+        return null;
+      }
+
+      if (!response.ok) {
+        return null;
+      }
+
+      const data = await response.json();
+      return {
+        userId: data.user_id,
+        username: data.username,
+      };
+    } catch {
+      return null;
+    }
+  },
+
   login: async function ({ username, password }: UserCredentialsProps) {
     try {
       const response = await fetch("api/auth/login", {
