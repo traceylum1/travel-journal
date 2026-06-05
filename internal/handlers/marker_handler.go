@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"errors"
 	"log"
 	"net/http"
@@ -9,14 +10,20 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5"
 	"github.com/traceylum1/travel-journal/internal/models"
-	"github.com/traceylum1/travel-journal/internal/repository"
 )
 
-type MarkerHandler struct {
-	repo *repository.MarkerRepository
+type markerRepository interface {
+	CreateMarker(ctx context.Context, m *models.CreateMarkerInput) (int, error)
+	UpdateMarker(ctx context.Context, m *models.UpdateMarkerInput) error
+	DeleteMarker(ctx context.Context, markerID int) error
+	GetUserTrips(ctx context.Context, username string) (*[]int, error)
 }
 
-func NewMarkerHandler(repo *repository.MarkerRepository) *MarkerHandler {
+type MarkerHandler struct {
+	repo markerRepository
+}
+
+func NewMarkerHandler(repo markerRepository) *MarkerHandler {
 	return &MarkerHandler{repo: repo}
 }
 

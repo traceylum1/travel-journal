@@ -1,19 +1,24 @@
 package handlers
 
 import (
-	"net/http"
+	"context"
 	"log"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/traceylum1/travel-journal/internal/models"
-	"github.com/traceylum1/travel-journal/internal/repository"
 )
 
-type TripHandler struct {
-	repo *repository.TripRepository
+type tripRepository interface {
+	CreateTrip(ctx context.Context, t *models.CreateTripInput) (int, error)
+	GetUserTrips(ctx context.Context, userID string) (*[]int, error)
 }
 
-func NewTripHandler(repo *repository.TripRepository) *TripHandler {
+type TripHandler struct {
+	repo tripRepository
+}
+
+func NewTripHandler(repo tripRepository) *TripHandler {
 	return &TripHandler{repo: repo}
 }
 
