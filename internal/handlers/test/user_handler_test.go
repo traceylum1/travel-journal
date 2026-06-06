@@ -1,31 +1,18 @@
-package handlers
+package handlers_test
 
 import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
 	"testing"
-	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/traceylum1/travel-journal/internal/session"
+	"github.com/traceylum1/travel-journal/internal/handlers"
 )
 
-func newTestSessionManager() *session.Manager {
-	return session.NewSessionManager(
-		session.NewInMemorySessionStore(),
-		time.Hour,
-		time.Hour,
-		time.Hour,
-		"session",
-	)
-}
-
 func TestCurrentUser_NoCookie_Returns401(t *testing.T) {
-	gin.SetMode(gin.TestMode)
-
-	sm := newTestSessionManager()
-	handler := NewUserHandler(nil)
+	sm := newTestSessionManager(t)
+	handler := handlers.NewUserHandler(nil)
 
 	w := httptest.NewRecorder()
 	c, _ := gin.CreateTestContext(w)
@@ -39,10 +26,8 @@ func TestCurrentUser_NoCookie_Returns401(t *testing.T) {
 }
 
 func TestCurrentUser_ValidSession_Returns200(t *testing.T) {
-	gin.SetMode(gin.TestMode)
-
-	sm := newTestSessionManager()
-	handler := NewUserHandler(nil)
+	sm := newTestSessionManager(t)
+	handler := handlers.NewUserHandler(nil)
 
 	createW := httptest.NewRecorder()
 	createC, _ := gin.CreateTestContext(createW)

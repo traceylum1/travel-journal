@@ -12,7 +12,7 @@ import (
 	"github.com/traceylum1/travel-journal/internal/models"
 )
 
-type markerRepository interface {
+type MarkerRepository interface {
 	CreateMarker(ctx context.Context, m *models.CreateMarkerInput) (int, error)
 	UpdateMarker(ctx context.Context, m *models.UpdateMarkerInput) error
 	DeleteMarker(ctx context.Context, markerID int) error
@@ -20,10 +20,10 @@ type markerRepository interface {
 }
 
 type MarkerHandler struct {
-	repo markerRepository
+	repo MarkerRepository
 }
 
-func NewMarkerHandler(repo markerRepository) *MarkerHandler {
+func NewMarkerHandler(repo MarkerRepository) *MarkerHandler {
 	return &MarkerHandler{repo: repo}
 }
 

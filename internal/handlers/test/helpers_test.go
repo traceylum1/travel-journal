@@ -1,11 +1,14 @@
-package handlers
+package handlers_test
 
 import (
 	"io"
 	"net/http/httptest"
 	"strings"
+	"testing"
+	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/traceylum1/travel-journal/internal/session"
 )
 
 func init() {
@@ -30,4 +33,15 @@ func performRequest(handler gin.HandlerFunc, method, path, body string, params g
 
 	handler(c)
 	return w
+}
+
+func newTestSessionManager(t *testing.T) *session.Manager {
+	t.Helper()
+	return session.NewSessionManager(
+		session.NewInMemorySessionStore(),
+		time.Hour,
+		time.Hour,
+		time.Hour,
+		"session",
+	)
 }

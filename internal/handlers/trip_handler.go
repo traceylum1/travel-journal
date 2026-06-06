@@ -9,16 +9,16 @@ import (
 	"github.com/traceylum1/travel-journal/internal/models"
 )
 
-type tripRepository interface {
+type TripRepository interface {
 	CreateTrip(ctx context.Context, t *models.CreateTripInput) (int, error)
 	GetUserTrips(ctx context.Context, userID string) (*[]int, error)
 }
 
 type TripHandler struct {
-	repo tripRepository
+	repo TripRepository
 }
 
-func NewTripHandler(repo tripRepository) *TripHandler {
+func NewTripHandler(repo TripRepository) *TripHandler {
 	return &TripHandler{repo: repo}
 }
 

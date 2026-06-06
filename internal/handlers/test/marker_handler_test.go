@@ -1,4 +1,4 @@
-package handlers
+package handlers_test
 
 import (
 	"context"
@@ -9,6 +9,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5"
+	"github.com/traceylum1/travel-journal/internal/handlers"
 	"github.com/traceylum1/travel-journal/internal/models"
 )
 
@@ -52,7 +53,7 @@ const validUpdateMarkerBody = `{
 }`
 
 func TestCreateMarker_InvalidJSON_Returns400(t *testing.T) {
-	handler := NewMarkerHandler(&fakeMarkerRepo{})
+	handler := handlers.NewMarkerHandler(&fakeMarkerRepo{})
 
 	w := performRequest(handler.CreateMarker(), http.MethodPost, "/api/protected/addMarker", `{`, nil)
 
@@ -67,7 +68,7 @@ func TestCreateMarker_RepoError_Returns500(t *testing.T) {
 			return 0, errors.New("db down")
 		},
 	}
-	handler := NewMarkerHandler(repo)
+	handler := handlers.NewMarkerHandler(repo)
 
 	w := performRequest(handler.CreateMarker(), http.MethodPost, "/api/protected/addMarker", validCreateMarkerBody, nil)
 
@@ -85,7 +86,7 @@ func TestCreateMarker_Success_Returns201(t *testing.T) {
 			return 99, nil
 		},
 	}
-	handler := NewMarkerHandler(repo)
+	handler := handlers.NewMarkerHandler(repo)
 
 	w := performRequest(handler.CreateMarker(), http.MethodPost, "/api/protected/addMarker", validCreateMarkerBody, nil)
 
@@ -103,7 +104,7 @@ func TestCreateMarker_Success_Returns201(t *testing.T) {
 }
 
 func TestUpdateMarker_InvalidMarkerID_Returns400(t *testing.T) {
-	handler := NewMarkerHandler(&fakeMarkerRepo{})
+	handler := handlers.NewMarkerHandler(&fakeMarkerRepo{})
 
 	w := performRequest(
 		handler.UpdateMarker(),
@@ -119,7 +120,7 @@ func TestUpdateMarker_InvalidMarkerID_Returns400(t *testing.T) {
 }
 
 func TestUpdateMarker_InvalidJSON_Returns400(t *testing.T) {
-	handler := NewMarkerHandler(&fakeMarkerRepo{})
+	handler := handlers.NewMarkerHandler(&fakeMarkerRepo{})
 
 	w := performRequest(
 		handler.UpdateMarker(),
@@ -140,7 +141,7 @@ func TestUpdateMarker_NotFound_Returns404(t *testing.T) {
 			return pgx.ErrNoRows
 		},
 	}
-	handler := NewMarkerHandler(repo)
+	handler := handlers.NewMarkerHandler(repo)
 
 	w := performRequest(
 		handler.UpdateMarker(),
@@ -164,7 +165,7 @@ func TestUpdateMarker_Success_Returns200(t *testing.T) {
 			return nil
 		},
 	}
-	handler := NewMarkerHandler(repo)
+	handler := handlers.NewMarkerHandler(repo)
 
 	w := performRequest(
 		handler.UpdateMarker(),
@@ -188,7 +189,7 @@ func TestUpdateMarker_Success_Returns200(t *testing.T) {
 }
 
 func TestDeleteMarker_InvalidMarkerID_Returns400(t *testing.T) {
-	handler := NewMarkerHandler(&fakeMarkerRepo{})
+	handler := handlers.NewMarkerHandler(&fakeMarkerRepo{})
 
 	w := performRequest(
 		handler.DeleteMarker(),
@@ -209,7 +210,7 @@ func TestDeleteMarker_NotFound_Returns404(t *testing.T) {
 			return pgx.ErrNoRows
 		},
 	}
-	handler := NewMarkerHandler(repo)
+	handler := handlers.NewMarkerHandler(repo)
 
 	w := performRequest(
 		handler.DeleteMarker(),
@@ -233,7 +234,7 @@ func TestDeleteMarker_Success_Returns200(t *testing.T) {
 			return nil
 		},
 	}
-	handler := NewMarkerHandler(repo)
+	handler := handlers.NewMarkerHandler(repo)
 
 	w := performRequest(
 		handler.DeleteMarker(),
@@ -262,7 +263,7 @@ func TestGetMarkersByTrip_UserNotFound_Returns404(t *testing.T) {
 			return nil, errors.New("user not found")
 		},
 	}
-	handler := NewMarkerHandler(repo)
+	handler := handlers.NewMarkerHandler(repo)
 
 	w := performRequest(
 		handler.GetMarkersByTrip(),
@@ -287,7 +288,7 @@ func TestGetMarkersByTrip_Success_Returns200(t *testing.T) {
 			return &trips, nil
 		},
 	}
-	handler := NewMarkerHandler(repo)
+	handler := handlers.NewMarkerHandler(repo)
 
 	w := performRequest(
 		handler.GetMarkersByTrip(),

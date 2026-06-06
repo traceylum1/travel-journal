@@ -1,4 +1,4 @@
-package handlers
+package handlers_test
 
 import (
 	"context"
@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/gin-gonic/gin"
+	"github.com/traceylum1/travel-journal/internal/handlers"
 	"github.com/traceylum1/travel-journal/internal/models"
 )
 
@@ -34,7 +35,7 @@ const validCreateTripBody = `{
 }`
 
 func TestCreateTrip_InvalidJSON_Returns400(t *testing.T) {
-	handler := NewTripHandler(&fakeTripRepo{})
+	handler := handlers.NewTripHandler(&fakeTripRepo{})
 
 	w := performRequest(handler.CreateTrip(), http.MethodPost, "/api/protected/createTrip", `{`, nil)
 
@@ -49,7 +50,7 @@ func TestCreateTrip_RepoError_Returns500(t *testing.T) {
 			return 0, errors.New("db down")
 		},
 	}
-	handler := NewTripHandler(repo)
+	handler := handlers.NewTripHandler(repo)
 
 	w := performRequest(handler.CreateTrip(), http.MethodPost, "/api/protected/createTrip", validCreateTripBody, nil)
 
@@ -67,7 +68,7 @@ func TestCreateTrip_Success_Returns201(t *testing.T) {
 			return 42, nil
 		},
 	}
-	handler := NewTripHandler(repo)
+	handler := handlers.NewTripHandler(repo)
 
 	w := performRequest(handler.CreateTrip(), http.MethodPost, "/api/protected/createTrip", validCreateTripBody, nil)
 
@@ -90,7 +91,7 @@ func TestGetUserTrips_NotFound_Returns404(t *testing.T) {
 			return nil, errors.New("not found")
 		},
 	}
-	handler := NewTripHandler(repo)
+	handler := handlers.NewTripHandler(repo)
 
 	w := performRequest(
 		handler.GetUserTrips(),
@@ -115,7 +116,7 @@ func TestGetUserTrips_Success_Returns200(t *testing.T) {
 			return &trips, nil
 		},
 	}
-	handler := NewTripHandler(repo)
+	handler := handlers.NewTripHandler(repo)
 
 	w := performRequest(
 		handler.GetUserTrips(),
